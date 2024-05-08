@@ -4,15 +4,37 @@ import sqlite3
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/home')
 def homepage():
     return render_template("home.html")
 
 
-@app.route('/about')
-def about():
-    return 'about :)'
+@app.route('/signup')
+def signup():
+    return render_template("signup.html")
 
+@app.route('/login')
+def login():
+    return render_template("login.html")
+
+@app.route('/string')
+def string():
+    conn = sqlite3.connect('instruments.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM Instruments WHERE familyid = 1")
+    return render_template("string.html")
+
+@app.route('/woodwind')
+def woodwind():
+    return render_template("woodwind.html")
+
+@app.route('/brass')
+def brass():
+    return render_template("brass.html")
+
+@app.route('/percussion')
+def percussion():
+    return render_template("percussion.html")
 
 @app.route('/instruments/<int:id>')
 def pizza(id):
