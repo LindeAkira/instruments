@@ -22,6 +22,18 @@ def comments():
     instr = 
     return render_template("comments.html")
 
+# Individual instrument details page.
+@app.route('/intstrument/<int:id>')
+def teddy_details(id):
+  # print("The instrument id is {}".format(id))  # DEBUG
+  conn = sqlite3.connect(app.config['DATABASE'])
+  cur = conn.cursor()
+  cur.execute("SELECT * FROM Instrument WHERE id=?;",(id,))
+  # fetchone returns a tuple containing the data for one entry
+  teddy = cur.fetchone()
+  conn.close()
+  return render_template("instrument.html", teddy=teddy)
+
 @app.route('/string')
 def string():
     conn = sqlite3.connect('instruments.db')
