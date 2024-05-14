@@ -17,33 +17,42 @@ def signup():
 def login():
     return render_template("login.html")
 
+@app.route('/comments')
+def comments():
+    instr = 
+    return render_template("comments.html")
+
 @app.route('/string')
 def string():
     conn = sqlite3.connect('instruments.db')
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM Instruments WHERE familyid = 1")
-    return render_template("string.html")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Instrument WHERE familyid = 1")
+    string = cursor.fetchall()
+    return render_template("string.html", string=string)
 
 @app.route('/woodwind')
 def woodwind():
-    return render_template("woodwind.html")
+    conn = sqlite3.connect('instruments.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Instrument WHERE familyid = 2")
+    woodwind = cursor.fetchall()
+    return render_template("woodwind.html", woodwind=woodwind)
 
 @app.route('/brass')
 def brass():
-    return render_template("brass.html")
+    conn = sqlite3.connect('instruments.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Instrument WHERE familyid = 3")
+    brass = cursor.fetchall()
+    return render_template("brass.html", brass=brass)
 
 @app.route('/percussion')
 def percussion():
-    return render_template("percussion.html")
-
-@app.route('/instruments/<int:id>')
-def pizza(id):
     conn = sqlite3.connect('instruments.db')
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM Instruments WHERE id = ?", (id,))
-    pizza = cur.fetchone()
-    return render_template('pizza.html', pizza=pizza)
-
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Instrument WHERE familyid = 4")
+    percussion = cursor.fetchall()
+    return render_template("percussion.html", percussion=percussion)
 
 # must be the last two lines of code for website
 if __name__ == '__main__':
