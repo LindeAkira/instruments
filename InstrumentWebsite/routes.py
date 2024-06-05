@@ -1,31 +1,35 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for, request, session
 import sqlite3
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+
 
 app = Flask(__name__)
-
+app.secret_key = 'secret'
 
 @app.route('/')
 def homepage():
     return render_template("home.html")
 
-
-@app.route('/signup, methods=["GET", "POST"]')
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
     # If the user made a POST request, create a new user
     if request.method == "POST":
-        user = Users(username=request.form.get("username"),
-                     password=request.form.get("password"))
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        '''Validation check:'''
+        if len(password) < 8 or not any(char.isdigit() for char in password) or not any(char.isupper() for char in password):
+            raise ValueError("Password must be at least 8 characters long and contain at least one digit and one uppercase letter")
         # Add the user to the database
-        db.session.add(user)
+        conn = sqlite3.connect("instruments.db")
+        cur = conn.cursor()
+        cur.execute("INSERT INTO User VALUES (?, ?);", (username, password))
         # Commit the changes made
-        db.session.commit()
+        conn.session.commit()
         # Once user account created, redirect them
         # to login route (created later on)
         return redirect(url_for("login"))
     # Renders sign_up template if user made a GET request
-    return render_template("sign_up.html")
+    return render_template("signup.html")
 
 @app.route('/login')
 def login():
