@@ -1,28 +1,22 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<div id="content">
-  <h2>Instrument Details for the {{ instrument[1] }}</h2>
-  <p>{{ instrument[3] }}</p>
-  <h3>Comments</h3>
-  <form method="POST">
-    <label for="username">Comment:</label><br>
-    <input type="text" id="commment" name="comment" required><br>
-    <input type="submit" value="Login">
-</form>
-{% if comments %}
-  {% for comment in comments %}
-    <div class="comment">
-      <p class="username">{{ comment[1] }}:</p> <!-- Comment author -->
-      <p><strong>Filtered Comment:</strong> {{ comment[0] }}</p> <!-- Filtered comment -->
-    </div>
-  {% endfor %}
-{% else %}
-  <p>No comments for this instrument.</p>
-{% endif %}
-</div>
-<div>
-  <a href="{{ url_for('add_comment', instrument_id=instrument[0]) }}">Add a Comment</a>
-</div>
-<p><a href="{{ url_for('home') }}">Back to Home</a></p>
+  <div id="content">
+    <h2>Instrument Details for the {{ instrument[1] }}</h2>
+    <p>{{ instrument[3] }}</p>
+    <h3>Comments</h3>
+  {% if comments %}
+    <ul>
+        {% for comment in comments %}
+            <li><strong>{{ comment[1] }}</strong>: {{ comment[0] }}</li>
+        {% endfor %}
+    </ul>
+  {% else %}
+  <p>No comments yet. Be the first to comment!</p>
+  {% endif %}
+  </div>
+  <div>
+    <a href="{{ url_for('add_comment', instrument_id=instrument[0]) }}">Add a Comment</a>
+  </div>
+  <p><a href="{{ url_for('home') }}">Back to Home</a></p>
 {% endblock %}

@@ -21,19 +21,21 @@ def check_password(stored_password, provided_password):
     return stored_password == hash_password(provided_password)
 
 
-def sql_queries(query, option):
-    connection = sqlite3.connect('toast.db')
+def sql_queries(query, params, option):
+    connection = sqlite3.connect('instruments.db')
     cursor = connection.cursor()
-    cursor.execute(query)
+    cursor.execute(query, params)
     if option == 'fetchone':
         result = cursor.fetchone()
+        connection.close()
         return result
     elif option == 'fetchall':
         result = cursor.fetchall()
+        connection.close()
         return result
     elif option == 'commit':
         connection.commit()
-    connection.close()
+        connection.close()
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -46,18 +48,6 @@ def signup():
         if len(password) < 8 or not any(char.isdigit() for char in password) or not any(char.isupper() for char in password):
             flash("Password must be at least 8 characters long, must contain at least one digit, and must contain at least one uppercase letter", "error")
             return render_template('signup.html')
-        
-        
-        # if len(password) < 8:
-        #     flash("Password must be at least 8 characters long", "error")
-        #     return render_template('signup.html')
-        # if not any(char.isdigit() for char in password):
-        #     flash("Password must contain at least one digit", "error")
-        #     return render_template('signup.html')
-        # if not any(char.isupper() for char in password):
-        #     flash("Password must contain at least one uppercase letter", "error")
-        #     return render_template('signup.html')
-
         # Check if username already exists
         conn = sqlite3.connect("instruments.db")
         cur = conn.cursor()
@@ -98,10 +88,11 @@ def login():
         conn.close()
 
         if user and check_password(user[2], password):
-            session['username'] = username
-            flash("Login successful", "success")
-            return redirect(url_for('string'))
-        flash('Invalid credentials', 'error')
+            session['user_id'] = user[0]  # Store user ID in session
+            flash('Login successful!', 'success')
+            return redirect(url_for('home'))  # Redirect to the home page
+        else:
+            flash('Invalid username or password.', 'error')
     return render_template('login.html')
 
 
@@ -129,7 +120,7 @@ def add_comment(instrument_id):
     if request.method == 'POST':
         # Get comment and user_id from the form
         comment_text = request.form.get('comment')
-        user_id = 1  # Replace with logic to get the actual user ID
+        user_id = session.get('user_id')
 
         # Validation
         if not comment_text:
@@ -137,13 +128,14 @@ def add_comment(instrument_id):
             return render_template('add_comment.html', instrument_id=instrument_id)
 
         # Insert the comment into the database
-        query = "INSERT INTO Comments (instrument_id, user_id, unchecked_comment) VALUES (?, ?, ?);"
-        try:
-            sql_queries(query, (instrument_id, user_id, comment_text), 'commit')
-            flash('Comment added successfully!', 'success')
-            return redirect(url_for('instrument_details', id=instrument_id))
-        except Exception as e:
-            flash(f"An error occurred: {e}", 'error')
+        else:
+            query = "INSERT INTO Comment (instid, userid, unchecked_comment) VALUES (?, ?, ?);"
+            try:
+                sql_queries(query, (instrument_id, user_id, comment_text), 'commit')
+                flash('Comment added successfully!', 'success')
+                return redirect(url_for('instrument_details', id=instrument_id))
+            except Exception as e:
+                flash(f"An error occurred: {e}", 'error')
 
     # Render the comment form
     return render_template('add_comment.html', instrument_id=instrument_id)
@@ -155,10 +147,10 @@ def instrument_details(id):
     # Define queries
     instrument_query = "SELECT * FROM Instrument WHERE id = ?;"
     comments_query = """
-        SELECT Comments.unchecked_comment, Comments.checked_comment, Users.username
-        FROM Comments
-        JOIN Users ON Comments.user_id = Users.id
-        WHERE Comments.instrument_id = ?;
+        SELECT Comment.checked_comment, User.username
+        FROM Comment
+        JOIN User ON Comment.userid = User.id
+        WHERE Comment.instid = ?;
     """
     # Fetch instrument details
     instrument = sql_queries(instrument_query, (id,), 'fetchone')
