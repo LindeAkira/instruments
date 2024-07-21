@@ -48,29 +48,22 @@ def signup():
         if len(password) < 8 or not any(char.isdigit() for char in password) or not any(char.isupper() for char in password):
             flash("Password must be at least 8 characters long, must contain at least one digit, and must contain at least one uppercase letter", "error")
             return render_template('signup.html')
+
         # Check if username already exists
-        conn = sqlite3.connect("instruments.db")
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM User WHERE username = ?", (username,))
-        existing_user = cur.fetchone()
+        existing_user = sql_queries("SELECT * FROM User WHERE username = ?", (username,), 'fetchone')
         if existing_user:
             flash("Username already exists. Please choose a different one.", "error")
-            conn.close()
             return render_template('signup.html')
 
         # Add the user to the database
         hashed_password = hash_password(password)
         try:
-            cur.execute("INSERT INTO User (username, password) VALUES (?, ?)", (username, hashed_password))
-            conn.commit()
+            sql_queries("INSERT INTO User (username, password) VALUES (?, ?)", (username, hashed_password), 'commit')
             flash("Account created successfully", "success")
             return redirect(url_for('login'))
         except Exception as e:
-            conn.rollback()
             flash(f"An error occurred: {e}", "error")
             return render_template('signup.html')
-        finally:
-            conn.close()
 
     return render_template('signup.html')
 
@@ -81,18 +74,15 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        conn = sqlite3.connect("instruments.db")
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM User WHERE username = ?", (username,))
-        user = cur.fetchone()
-        conn.close()
+        user = sql_queries("SELECT * FROM User WHERE username = ?", (username,), 'fetchone')
 
-        if user and check_password(user[2], password):
+        if user and check_password(user[2], password):  # Replace check_password with your password checking logic
             session['user_id'] = user[0]  # Store user ID in session
             flash('Login successful!', 'success')
             return redirect(url_for('home'))  # Redirect to the home page
         else:
             flash('Invalid username or password.', 'error')
+    
     return render_template('login.html')
 
 
@@ -132,7 +122,7 @@ def add_comment(instrument_id):
             query = "INSERT INTO Comment (instid, userid, unchecked_comment) VALUES (?, ?, ?);"
             try:
                 sql_queries(query, (instrument_id, user_id, comment_text), 'commit')
-                flash('Comment added successfully!', 'success')
+                flash('Comment added successfully! Please wait for your comment to be profanity-checked ', 'success')
                 return redirect(url_for('instrument_details', id=instrument_id))
             except Exception as e:
                 flash(f"An error occurred: {e}", 'error')
@@ -163,39 +153,30 @@ def instrument_details(id):
 
 @app.route('/string')
 def string():
-    conn = sqlite3.connect('instruments.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Instrument WHERE familyid = 1")
-    string = cursor.fetchall()
-    print(string)
-    return render_template("string.html", results=string)
+    query = "SELECT * FROM Instrument WHERE familyid = 1"
+    results = sql_queries(query, (), 'fetchall')
+    return render_template("string.html", results=results)
 
 
 @app.route('/woodwind')
 def woodwind():
-    conn = sqlite3.connect('instruments.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Instrument WHERE familyid = 2")
-    woodwind = cursor.fetchall()
-    return render_template("woodwind.html", results=woodwind)
+    query = "SELECT * FROM Instrument WHERE familyid = 2"
+    results = sql_queries(query, (), 'fetchall')
+    return render_template("woodwind.html", results=results)
 
 
 @app.route('/brass')
 def brass():
-    conn = sqlite3.connect('instruments.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Instrument WHERE familyid = 3")
-    brass = cursor.fetchall()
-    return render_template("brass.html", results=brass)
+    query = "SELECT * FROM Instrument WHERE familyid = 3"
+    results = sql_queries(query, (), 'fetchall')
+    return render_template("brass.html", results=results)
 
 
 @app.route('/percussion')
 def percussion():
-    conn = sqlite3.connect('instruments.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Instrument WHERE familyid = 4")
-    percussion = cursor.fetchall()
-    return render_template("percussion.html", results=percussion)
+    query = "SELECT * FROM Instrument WHERE familyid = 4"
+    results = sql_queries(query, (), 'fetchall')
+    return render_template("percussion.html", results=results)
 
 
 if __name__ == '__main__':
