@@ -1,8 +1,16 @@
-body{
-    font-family:
-	"Sedan SC";
-    color:rgb(0, 0, 0);
-    background-color:rgb(194, 123, 57);
+body {
+    padding-top: 50px; /* Ensure content is not hidden behind fixed nav bar */
+    text-align: left;
+}
+.navbar {
+    margin-bottom: 20px;
+}
+.nav-item .nav-link {
+    font-size: 1.1em;
+    color: #555;
+}
+.nav-item .nav-link:hover {
+    color: #000;
 }
 
 p{

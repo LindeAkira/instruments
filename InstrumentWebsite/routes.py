@@ -50,7 +50,7 @@ def signup():
             return render_template('signup.html')
 
         # Check if username already exists
-        existing_user = sql_queries("SELECT * FROM User WHERE username = ?", (username,), 'fetchone')
+        existing_user = sql_queries("SELECT * FROM Users WHERE username = ?", (username,), 'fetchone')
         if existing_user:
             flash("Username already exists. Please choose a different one.", "error")
             return render_template('signup.html')
@@ -58,7 +58,7 @@ def signup():
         # Add the user to the database
         hashed_password = hash_password(password)
         try:
-            sql_queries("INSERT INTO User (username, password) VALUES (?, ?)", (username, hashed_password), 'commit')
+            sql_queries("INSERT INTO Users (username, password) VALUES (?, ?)", (username, hashed_password), 'commit')
             flash("Account created successfully", "success")
             return redirect(url_for('login'))
         except Exception as e:
@@ -74,7 +74,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        user = sql_queries("SELECT * FROM User WHERE username = ?", (username,), 'fetchone')
+        user = sql_queries("SELECT * FROM Users WHERE username = ?", (username,), 'fetchone')
 
         if user and check_password(user[2], password):  # Replace check_password with your password checking logic
             session['user_id'] = user[0]  # Store user ID in session
@@ -87,13 +87,6 @@ def login():
 
 
 @app.route('/')
-def lobby():
-    if 'username' in session:
-        return f'Logged in as {session["username"]}'
-    return render_template('lobby.html')
-
-
-@app.route('/home')
 def home():
     return render_template('home.html')
 
@@ -102,11 +95,14 @@ def home():
 def logout():
     session.pop('username', None)
     flash("You have been logged out", "success")
-    return redirect(url_for('lobby'))
+    return redirect(url_for('home'))
 
 
-@app.route('/comment/<int:instrument_id>', methods=['GET', 'POST'])
+@app.route('/add_comment/<int:instrument_id>', methods=['GET', 'POST'])
 def add_comment(instrument_id):
+    if 'user_id' not in session:
+        flash("You must be logged in to add a comment.", "error")
+        return redirect(url_for('login'))
     if request.method == 'POST':
         # Get comment and user_id from the form
         comment_text = request.form.get('comment')
@@ -119,7 +115,7 @@ def add_comment(instrument_id):
 
         # Insert the comment into the database
         else:
-            query = "INSERT INTO Comment (instid, userid, unchecked_comment) VALUES (?, ?, ?);"
+            query = "INSERT INTO Comment (instrument_id, user_id, unchecked_comment) VALUES (?, ?, ?);"
             try:
                 sql_queries(query, (instrument_id, user_id, comment_text), 'commit')
                 flash('Comment added successfully! Please wait for your comment to be profanity-checked ', 'success')
@@ -134,20 +130,25 @@ def add_comment(instrument_id):
 # Individual instrument details page.
 @app.route('/instrument/<int:id>')
 def instrument_details(id):
-    # Define queries
-    instrument_query = "SELECT * FROM Instrument WHERE id = ?;"
-    comments_query = """
-        SELECT Comment.checked_comment, User.username
-        FROM Comment
-        JOIN User ON Comment.userid = User.id
-        WHERE Comment.instid = ?;
-    """
     # Fetch instrument details
-    instrument = sql_queries(instrument_query, (id,), 'fetchone')
+    query_instrument = "SELECT * FROM Instrument WHERE id = ?"
+    instrument = sql_queries(query_instrument, (id,), 'fetchone')
+    
+    # Check if instrument was found
+    if not instrument:
+        flash("Instrument not found.", "error")
+        return redirect(url_for('home'))  # Redirect to home or another appropriate page
 
-    # Fetch comments for the specific instrument
-    comments = sql_queries(comments_query, (id,), 'fetchall')
+    # Fetch comments for the instrument
+    query_comments = """
+        SELECT checked_comment, username
+        FROM Comments
+        JOIN Users ON Comments.user_id = Users.id
+        WHERE instrument_id = ?
+    """
+    comments = sql_queries(query_comments, (id,), 'fetchall')
 
+    # Pass the instrument details and comments to the template
     return render_template("instrument.html", instrument=instrument, comments=comments)
 
 

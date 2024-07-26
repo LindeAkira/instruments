@@ -2,21 +2,27 @@
 
 {% block content %}
   <div id="content">
-    <h2>Instrument Details for the {{ instrument[1] }}</h2>
-    <p>{{ instrument[3] }}</p>
-    <h3>Comments</h3>
-  {% if comments %}
-    <ul>
+    <h2>Instrument Details for {{ instrument[1] }}</h2>  <!-- Assuming index 1 is the instrument name -->
+    <p>{{ instrument[3] }}</p>  <!-- Assuming index 3 is the instrument description -->
+
+    <h2>Comments</h2>
+
+    {% if comments %}
+      <ul>
         {% for comment in comments %}
-            <li><strong>{{ comment[1] }}</strong>: {{ comment[0] }}</li>
+          <li><strong>{{ comment[1] }}</strong>: {{ comment[0] }}</li>  <!-- Assuming index 1 is the username and index 0 is the comment -->
         {% endfor %}
-    </ul>
-  {% else %}
-  <p>No comments yet. Be the first to comment!</p>
-  {% endif %}
+      </ul>
+    {% else %}
+      <p>No comments yet. Be the first to comment!</p>
+    {% endif %}
+
+    {% if session.get('user_id') %}
+      <a href="{{ url_for('add_comment', instrument_id=instrument[0]) }}" class="btn btn-primary">Add Comment</a>  <!-- Assuming index 0 is the instrument ID -->
+    {% else %}
+      <p><a href="{{ url_for('login') }}">Log in</a> to add a comment.</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('home') }}">Back to Home</a></p>
   </div>
-  <div>
-    <a href="{{ url_for('add_comment', instrument_id=instrument[0]) }}">Add a Comment</a>
-  </div>
-  <p><a href="{{ url_for('home') }}">Back to Home</a></p>
 {% endblock %}
