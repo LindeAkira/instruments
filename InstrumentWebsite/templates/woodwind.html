@@ -1,10 +1,22 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-  {% for woodwind in results %}
-    <p>
-      <a href="/instrument/{{woodwind[0]}}">{{ woodwind[1] }}</a>
-    </p>
-  {% endfor %}
+<h1>Woodwind Instruments</h1>
 
+<!-- Search Form -->
+<form method="GET" action="{{ url_for('woodwind') }}">
+  <input type="text" name="search" placeholder="Search for a woodwind instrument">
+  <button type="submit">Search</button>
+</form>
+
+<!-- Display Results -->
+{% if results %}
+<ul>
+  {% for instrument in results %}
+    <li><a href="{{ url_for('instrument_details', id=instrument[0]) }}">{{ instrument[1] }}</a></li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No instruments found.</p>
+{% endif %}
 {% endblock %}

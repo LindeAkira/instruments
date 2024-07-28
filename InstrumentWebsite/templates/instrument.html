@@ -2,8 +2,9 @@
 
 {% block content %}
   <div id="content">
-    <h2>Instrument Details for {{ instrument[1] }}</h2>  <!-- Assuming index 1 is the instrument name -->
-    <p>{{ instrument[3] }}</p>  <!-- Assuming index 3 is the instrument description -->
+    <h2>Instrument Details for {{ instrument[1] }}</h2> 
+    <img src="{{ instrument[4] }}" alt="image of {{ instrument[1] }}">
+    <p>{{ instrument[3] }}</p> 
 
     <h2>Comments</h2>
 

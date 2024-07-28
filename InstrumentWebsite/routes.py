@@ -93,7 +93,7 @@ def home():
 
 @app.route('/logout')
 def logout():
-    session.pop('username', None)
+    session.pop('user_id', None)
     flash("You have been logged out", "success")
     return redirect(url_for('home'))
 
@@ -154,29 +154,53 @@ def instrument_details(id):
 
 @app.route('/string')
 def string():
-    query = "SELECT * FROM Instrument WHERE familyid = 1"
-    results = sql_queries(query, (), 'fetchall')
+    search_term = request.args.get('search')
+    if search_term:
+        query = "SELECT * FROM Instrument WHERE familyid = 1 AND name LIKE ?"
+        params = ('%' + search_term + '%',)
+    else:
+        query = "SELECT * FROM Instrument WHERE familyid = 1"
+        params = ()
+    results = sql_queries(query, params, 'fetchall')
     return render_template("string.html", results=results)
 
 
 @app.route('/woodwind')
 def woodwind():
-    query = "SELECT * FROM Instrument WHERE familyid = 2"
-    results = sql_queries(query, (), 'fetchall')
+    search_term = request.args.get('search')
+    if search_term:
+        query = "SELECT id, name FROM Instrument WHERE familyid = 2 AND name LIKE ?"
+        params = ('%' + search_term + '%',)
+    else:
+        query = "SELECT id, name FROM Instrument WHERE familyid = 2"
+        params = ()
+    results = sql_queries(query, params, 'fetchall')
     return render_template("woodwind.html", results=results)
 
 
 @app.route('/brass')
 def brass():
-    query = "SELECT * FROM Instrument WHERE familyid = 3"
-    results = sql_queries(query, (), 'fetchall')
+    search_term = request.args.get('search')
+    if search_term:
+        query = "SELECT id, name FROM Instrument WHERE familyid = 3 AND name LIKE ?"
+        params = ('%' + search_term + '%',)
+    else:
+        query = "SELECT id, name FROM Instrument WHERE familyid = 3"
+        params = ()
+    results = sql_queries(query, params, 'fetchall')
     return render_template("brass.html", results=results)
 
 
 @app.route('/percussion')
 def percussion():
-    query = "SELECT * FROM Instrument WHERE familyid = 4"
-    results = sql_queries(query, (), 'fetchall')
+    search_term = request.args.get('search')
+    if search_term:
+        query = "SELECT id, name FROM Instrument WHERE familyid = 4 AND name LIKE ?"
+        params = ('%' + search_term + '%',)
+    else:
+        query = "SELECT id, name FROM Instrument WHERE familyid = 4"
+        params = ()
+    results = sql_queries(query, params, 'fetchall')
     return render_template("percussion.html", results=results)
 
 
