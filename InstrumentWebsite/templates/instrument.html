@@ -3,9 +3,10 @@
 {% block content %}
   <div id="content">
     <h2>Instrument Details for {{ instrument[1] }}</h2> 
-    <img src="{{ instrument[4] }}" alt="image of {{ instrument[1] }}">
+    <img src="{{ instrument[4] }}" alt="Image of {{ instrument[1] }}">
     <p>{{ instrument[3] }}</p> 
 
+    <!-- Flash messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <ul class="flashes">
@@ -16,25 +17,20 @@
         {% endif %}
     {% endwith %}
 
-
     <h2>Comments</h2>
 
     {% if comments %}
     <ul>
       {% for comment in comments %}
-      <li>
-          
-            <li><strong>{{ comment[2] }}</strong>: {{ comment[4] }}</li>  <!-- Assuming index 1 is the username and index 0 is the comment -->
-          {% endfor %}
-
-        {% if session.get('user_id') == comment[2] %}
-          <form action="{{ url_for('delete_comment', comment_id=comment[3], instrument_id=instrument[0]) }}" method="post" style="display:inline;">
+        <li>
+          <strong>{{ comment[3] }}</strong>: {{ comment[2] }}
+          {% if session.get('user_id') == comment[4] %}
+          <form action="{{ url_for('delete_comment', comment_id=comment[0], instrument_id=instrument[0]) }}" method="post" style="display:inline;">
               <input type="submit" value="Delete" class="btn btn-danger btn-sm">
           </form>
-        
+          {% endif %}
         </li>
-        {% endif %}
-
+      {% endfor %}
     </ul>
     {% else %}
       <p>No comments yet. Be the first to comment!</p>

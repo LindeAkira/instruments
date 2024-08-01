@@ -113,7 +113,7 @@ def add_comment(instrument_id):
             params = (instrument_id, user_id, unchecked_comment, "")
             sql_queries(query, params, 'commit')
             flash("Comment added successfully and will be displayed after being profanity checked.", "success")
-            return redirect(url_for('instrument_details', id=instrument_id))
+            return redirect(url_for('instrument.html', instrument_id=instrument_id))
         except Exception as e:
             flash(f"An error occurred: {e}", "error")
             return render_template('add_comment.html', instrument_id=instrument_id)
@@ -122,28 +122,22 @@ def add_comment(instrument_id):
 
 
 # Individual instrument details page.
-@app.route('/instrument/<int:id>')
-def instrument_details(id):
-    # Fetch instrument details
-    query_instrument = "SELECT * FROM Instrument WHERE id = ?"
-    instrument = sql_queries(query_instrument, (id,), 'fetchone')
-    
-    # Check if instrument was found
-    if not instrument:
-        flash("Instrument not found.", "error")
-        return redirect(url_for('string'))  # Redirect to home or another appropriate page
+@app.route('/instrument/<int:instrument_id>')
+def instrument_details(instrument_id):
+    # Fetch the instrument details
+    instrument_query = "SELECT * FROM Instrument WHERE id = ?"
+    instrument = sql_queries(instrument_query, (instrument_id,), 'fetchone')
 
-    # Fetch comments for the instrument
-    query_comments = """
-        SELECT checked_comment, username
-        FROM Comments
-        JOIN Users ON Comments.user_id = Users.id
-        WHERE instrument_id = ?
+    # Fetch the comments with usernames
+    comments_query = """
+    SELECT Comments.id, Comments.unchecked_comment, Comments.checked_comment, Users.username, Comments.user_id
+    FROM Comments
+    JOIN Users ON Comments.user_id = Users.id
+    WHERE Comments.instrument_id = ?
     """
-    comments = sql_queries(query_comments, (id,), 'fetchall')
+    comments = sql_queries(comments_query, (instrument_id,), 'fetchall')
 
-    # Pass the instrument details and comments to the template
-    return render_template("instrument.html", instrument=instrument, comments=comments)
+    return render_template('instrument.html', instrument=instrument, comments=comments)
 
 
 @app.route('/delete_comment/<int:comment_id>/<int:instrument_id>', methods=['POST'])
@@ -159,14 +153,17 @@ def delete_comment(comment_id, instrument_id):
     comment = sql_queries(query, (comment_id,), 'fetchone')
 
     if comment and comment[0] == user_id:
-        delete_query = "DELETE FROM Comments WHERE id = ?"
-        sql_queries(delete_query, (comment_id,), 'commit')
-        flash("Comment deleted successfully.", "success")
+        try:
+            delete_query = "DELETE FROM Comments WHERE id = ?"
+            sql_queries(delete_query, (comment_id,), 'commit')
+            flash("Comment deleted successfully.", "success")
+        except Exception as e:
+            flash(f"An error occurred: {e}", "error")
     
     else:
         flash('You can only delete you own comments', 'error')
 
-    return redirect(url_for('instrument_details', id=instrument_id))
+    return redirect(url_for('instrument_details', instrument_id=instrument_id))
 
 
 @app.route('/string')
