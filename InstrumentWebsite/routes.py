@@ -78,52 +78,46 @@ def login():
 
         if user and check_password(user[2], password):  # Replace check_password with your password checking logic
             session['user_id'] = user[0]  # Store user ID in session
-            flash('Login successful!', 'success')
-            return redirect(url_for('home'))  # Redirect to the home page
+            return redirect(url_for('string'))  # Redirect to the string page
         else:
             flash('Invalid username or password.', 'error')
     
     return render_template('login.html')
 
 
-@app.route('/')
-def home():
-    return render_template('home.html')
-
-
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
     flash("You have been logged out", "success")
-    return redirect(url_for('home'))
+    return redirect(url_for('string'))
 
 
-@app.route('/add_comment/<int:instrument_id>', methods=['GET', 'POST'])
+@app.route('/comment/<int:instrument_id>', methods=['GET', 'POST'])
 def add_comment(instrument_id):
-    if 'user_id' not in session:
-        flash("You must be logged in to add a comment.", "error")
-        return redirect(url_for('login'))
     if request.method == 'POST':
-        # Get comment and user_id from the form
         comment_text = request.form.get('comment')
         user_id = session.get('user_id')
 
-        # Validation
+        if not user_id:
+            flash("You need to be logged in to add a comment.", "error")
+            return redirect(url_for('login'))
+
         if not comment_text:
-            flash('Comment cannot be empty.', 'error')
+            flash("Comment cannot be empty.", "error")
             return render_template('add_comment.html', instrument_id=instrument_id)
 
-        # Insert the comment into the database
-        else:
-            query = "INSERT INTO Comment (instrument_id, user_id, unchecked_comment) VALUES (?, ?, ?);"
-            try:
-                sql_queries(query, (instrument_id, user_id, comment_text), 'commit')
-                flash('Comment added successfully! Please wait for your comment to be profanity-checked ', 'success')
-                return redirect(url_for('instrument_details', id=instrument_id))
-            except Exception as e:
-                flash(f"An error occurred: {e}", 'error')
-
-    # Render the comment form
+        unchecked_comment = comment_text
+        # Add comment to the database
+        try:
+            query = "INSERT INTO Comments (instrument_id, user_id, unchecked_comment, checked_comment) VALUES (?, ?, ?, ?)"
+            params = (instrument_id, user_id, unchecked_comment, "")
+            sql_queries(query, params, 'commit')
+            flash("Comment added successfully and will be displayed after being profanity checked.", "success")
+            return redirect(url_for('instrument_details', id=instrument_id))
+        except Exception as e:
+            flash(f"An error occurred: {e}", "error")
+            return render_template('add_comment.html', instrument_id=instrument_id)
+    
     return render_template('add_comment.html', instrument_id=instrument_id)
 
 
@@ -137,7 +131,7 @@ def instrument_details(id):
     # Check if instrument was found
     if not instrument:
         flash("Instrument not found.", "error")
-        return redirect(url_for('home'))  # Redirect to home or another appropriate page
+        return redirect(url_for('string'))  # Redirect to home or another appropriate page
 
     # Fetch comments for the instrument
     query_comments = """
@@ -150,6 +144,29 @@ def instrument_details(id):
 
     # Pass the instrument details and comments to the template
     return render_template("instrument.html", instrument=instrument, comments=comments)
+
+
+@app.route('/delete_comment/<int:comment_id>/<int:instrument_id>', methods=['POST'])
+def delete_comment(comment_id, instrument_id):
+    user_id = session.get('user_id')
+
+    if not user_id:
+        flash('You need to be logged in to delete your comment', 'error')
+        return redirect(url_for('login'))
+    
+        # Check if the comment belongs to the logged-in user
+    query = "SELECT user_id FROM Comments WHERE id = ?"
+    comment = sql_queries(query, (comment_id,), 'fetchone')
+
+    if comment and comment[0] == user_id:
+        delete_query = "DELETE FROM Comments WHERE id = ?"
+        sql_queries(delete_query, (comment_id,), 'commit')
+        flash("Comment deleted successfully.", "success")
+    
+    else:
+        flash('You can only delete you own comments', 'error')
+
+    return redirect(url_for('instrument_details', id=instrument_id))
 
 
 @app.route('/string')

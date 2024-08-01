@@ -6,24 +6,46 @@
     <img src="{{ instrument[4] }}" alt="image of {{ instrument[1] }}">
     <p>{{ instrument[3] }}</p> 
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="flash {{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+
     <h2>Comments</h2>
 
     {% if comments %}
-      <ul>
-        {% for comment in comments %}
-          <li><strong>{{ comment[1] }}</strong>: {{ comment[0] }}</li>  <!-- Assuming index 1 is the username and index 0 is the comment -->
-        {% endfor %}
-      </ul>
+    <ul>
+      {% for comment in comments %}
+      <li>
+          
+            <li><strong>{{ comment[2] }}</strong>: {{ comment[4] }}</li>  <!-- Assuming index 1 is the username and index 0 is the comment -->
+          {% endfor %}
+
+        {% if session.get('user_id') == comment[2] %}
+          <form action="{{ url_for('delete_comment', comment_id=comment[3], instrument_id=instrument[0]) }}" method="post" style="display:inline;">
+              <input type="submit" value="Delete" class="btn btn-danger btn-sm">
+          </form>
+        
+        </li>
+        {% endif %}
+
+    </ul>
     {% else %}
       <p>No comments yet. Be the first to comment!</p>
     {% endif %}
 
     {% if session.get('user_id') %}
-      <a href="{{ url_for('add_comment', instrument_id=instrument[0]) }}" class="btn btn-primary">Add Comment</a>  <!-- Assuming index 0 is the instrument ID -->
+      <a href="{{ url_for('add_comment', instrument_id=instrument[0]) }}" class="btn btn-primary">Add Comment</a>
     {% else %}
       <p><a href="{{ url_for('login') }}">Log in</a> to add a comment.</p>
     {% endif %}
 
-    <p><a href="{{ url_for('home') }}">Back to Home</a></p>
+    <p><a href="{{ url_for('string') }}">Back to String page</a></p>
   </div>
 {% endblock %}
