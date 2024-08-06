@@ -2,6 +2,11 @@ body {
     padding-top: 50px; /* Ensure content is not hidden behind fixed nav bar */
     text-align: left;
 }
+
+h1 {
+    padding-top: 50px;
+}
+
 .navbar {
     margin-bottom: 20px;
 }
@@ -9,6 +14,7 @@ body {
     font-size: 1.1em;
     color: #555;
 }
+
 .nav-item .nav-link:hover {
     color: #000;
 }

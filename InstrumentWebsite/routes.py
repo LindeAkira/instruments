@@ -113,7 +113,7 @@ def add_comment(instrument_id):
             params = (instrument_id, user_id, unchecked_comment, "")
             sql_queries(query, params, 'commit')
             flash("Comment added successfully and will be displayed after being profanity checked.", "success")
-            return redirect(url_for('instrument.html', instrument_id=instrument_id))
+            return redirect(url_for('instrument_details', instrument_id=instrument_id))
         except Exception as e:
             flash(f"An error occurred: {e}", "error")
             return render_template('add_comment.html', instrument_id=instrument_id)
