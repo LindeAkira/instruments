@@ -117,9 +117,8 @@ def add_comment(instrument_id):
         except Exception as e:
             flash(f"An error occurred: {e}", "error")
             return render_template('add_comment.html', instrument_id=instrument_id)
-    
-    return render_template('add_comment.html', instrument_id=instrument_id)
 
+    return render_template('add_comment.html', instrument_id=instrument_id)
 
 # Individual instrument details page.
 @app.route('/instrument/<int:instrument_id>')

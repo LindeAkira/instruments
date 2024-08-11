@@ -1,8 +1,10 @@
 {% extends 'layout.html' %}
 
+{% block title %}Instruments{% endblock %}
+
 {% block content %}
   <div id="content">
-    <h1>Details for {{ instrument[1] }}</h1> 
+  <h1>Details for {{ instrument[1] }}</h1> 
     <img src="{{ instrument[4] }}" alt="Image of {{ instrument[1] }}">
     <p>{{ instrument[3] }}</p> 
 
@@ -33,7 +35,7 @@
       {% endfor %}
     </ul>
     {% else %}
-      <p>No comments yet. Be the first to comment!</p>
+      <p>No comments yet. Be the first!</p>
     {% endif %}
 
     {% if session.get('user_id') %}

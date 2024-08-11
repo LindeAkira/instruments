@@ -1,17 +1,43 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 body {
-    padding-top: 50px; /* Ensure content is not hidden behind fixed nav bar */
-    text-align: left;
+    display: grid;
+    grid-template-rows: auto 1fr auto; /* Header, content, footer */
+    min-height: 100vh;
+
+    h1 {
+        font-size: 32px;
+        padding-top: 20px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
 }
 
-h1 {
-    padding-top: 50px;
+
+.container {
+    grid-row: 2; /* This places the container in the middle row */
+    padding: 20px;
 }
 
+.footer {
+    grid-row: 3; /* This places the footer in the bottom row */
+    background-color: #ffff; 
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+    font-size: 0.1em;
+}
 .navbar {
     margin-bottom: 20px;
 }
+
 .nav-item .nav-link {
-    font-size: 1.1em;
+    font-size: 1.3em;
     color: #555;
 }
 
@@ -19,6 +45,6 @@ h1 {
     color: #000;
 }
 
-p{
-    color:rgb(0, 0, 0);
+p {
+    color: rgb(0, 0, 0);
 }

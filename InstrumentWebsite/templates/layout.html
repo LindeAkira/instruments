@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html>
-<extnd style.css
-    <head>
-        <title>Instruments</title>
-        <meta charset="UTF-8">
-        <title>Instrument Store</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" href="static/style.css">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
 
-        <nav>{%include "nav.html"%}</nav>
-    </head>
-    
-    <body>
-        
-        <div class="container mt-4">
-            {%block content%} 
-            {%endblock%}
-        </div>
+<body>
+    <nav>
+        {% include "nav.html" %}
+    </nav>
+    <div class="container mt-4">
+        {% block content %}
+        {% endblock %}
+    </div>
 
-        </body>
-    </body>
+    <footer class="footer">
+        <hr>
+        <h2>&copy; 2024 Akira Lindeman</h2>
+       
+    </footer>
+</body>
+
+
 
 </html>
