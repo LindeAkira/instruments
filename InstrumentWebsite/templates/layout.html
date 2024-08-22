@@ -11,19 +11,20 @@
 </head>
 
 <body>
-    <nav>
+    <nav>   
         {% include "nav.html" %}
     </nav>
-    <div class="container mt-4">
-        {% block content %}
-        {% endblock %}
-    </div>
 
-    <footer class="footer">
-        <hr>
-        <h2>&copy; 2024 Akira Lindeman</h2>
-       
-    </footer>
+        <div class="container mt-4">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <footer class="footer">
+            <hr>
+            <h2>&copy; 2024 Akira Lindeman</h2>
+        </footer>
+    
 </body>
 
 

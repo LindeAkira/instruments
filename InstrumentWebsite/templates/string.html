@@ -13,9 +13,11 @@
 
 <!-- Display Results -->
 {% if results %}
-<ul>
+<ul class="instrument-list">
   {% for instrument in results %}
-    <li><a href="{{ url_for('instrument_details', instrument_id=instrument[0]) }}">{{ instrument[1] }}</a></li>
+    <li class="instrument">
+      <a href="{{ url_for('instrument_details', instrument_id=instrument[0]) }}">{{ instrument[1] }}</a>
+    </li>
   {% endfor %}
 </ul>
 {% else %}

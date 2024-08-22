@@ -65,7 +65,7 @@ def signup():
             flash(f"An error occurred: {e}", "error")
             return render_template('signup.html')
 
-    return render_template('signup.html')
+    return render_template('signup.html', page='signup')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -76,13 +76,13 @@ def login():
 
         user = sql_queries("SELECT * FROM Users WHERE username = ?", (username,), 'fetchone')
 
-        if user and check_password(user[2], password):  # Replace check_password with your password checking logic
+        if user and check_password(user[2], password):
             session['user_id'] = user[0]  # Store user ID in session
             return redirect(url_for('string'))  # Redirect to the string page
         else:
             flash('Invalid username or password.', 'error')
     
-    return render_template('login.html')
+    return render_template('login.html', page='login')
 
 
 @app.route('/logout')
@@ -120,6 +120,7 @@ def add_comment(instrument_id):
 
     return render_template('add_comment.html', instrument_id=instrument_id)
 
+
 # Individual instrument details page.
 @app.route('/instrument/<int:instrument_id>')
 def instrument_details(instrument_id):
@@ -136,7 +137,7 @@ def instrument_details(instrument_id):
     """
     comments = sql_queries(comments_query, (instrument_id,), 'fetchall')
 
-    return render_template('instrument.html', instrument=instrument, comments=comments)
+    return render_template('instrument.html', instrument=instrument, page='instrument', comments=comments)
 
 
 @app.route('/delete_comment/<int:comment_id>/<int:instrument_id>', methods=['POST'])
@@ -175,7 +176,7 @@ def string():
         query = "SELECT * FROM Instrument WHERE familyid = 1"
         params = ()
     results = sql_queries(query, params, 'fetchall')
-    return render_template("string.html", results=results)
+    return render_template("string.html", page='string', results=results)
 
 
 @app.route('/woodwind')
@@ -188,7 +189,7 @@ def woodwind():
         query = "SELECT id, name FROM Instrument WHERE familyid = 2"
         params = ()
     results = sql_queries(query, params, 'fetchall')
-    return render_template("woodwind.html", results=results)
+    return render_template("woodwind.html", page='woodwind', results=results)
 
 
 @app.route('/brass')
@@ -201,7 +202,7 @@ def brass():
         query = "SELECT id, name FROM Instrument WHERE familyid = 3"
         params = ()
     results = sql_queries(query, params, 'fetchall')
-    return render_template("brass.html", results=results)
+    return render_template("brass.html", page='brass', results=results)
 
 
 @app.route('/percussion')
@@ -214,7 +215,7 @@ def percussion():
         query = "SELECT id, name FROM Instrument WHERE familyid = 4"
         params = ()
     results = sql_queries(query, params, 'fetchall')
-    return render_template("percussion.html", results=results)
+    return render_template("percussion.html", page='percussion', results=results)
 
 
 if __name__ == '__main__':

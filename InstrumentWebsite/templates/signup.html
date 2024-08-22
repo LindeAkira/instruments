@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Sign Up</title>
 </head>
 <body>
+    <div class="background">
     <h2>Sign Up</h2>
     <form method="POST">
         <label for="username">Username:</label><br>
@@ -22,5 +25,7 @@
             </ul>
         {% endif %}
     {% endwith %}
+
+    </div>
 </body>
 </html>
