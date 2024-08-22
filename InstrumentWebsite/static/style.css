@@ -3,16 +3,34 @@ html, body {
     margin: 0;
 }
 
+.navbar {
+    margin-bottom: 20px;
+}
+
+.navbar-brand {
+    font-size: 1.6em;
+}
+
+.nav-item .nav-link {
+    font-size: 1.3em;
+    color: #555;
+}
+
+.nav-item .nav-link:hover {
+    color: #000;
+}
+
 body {
     display: grid;
     grid-template-rows: auto 1fr auto; /* Header, content, footer */
     min-height: 100vh;
     position: relative;
     z-index: 1; /* Make sure the content is above the background */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
     h1 {
-        font-size: 30px;
-        padding-top: 20px;
+        font-size: 36px;
+        padding-top: 24px;
     }
 
     h2 {
@@ -38,26 +56,137 @@ body::before {
 }
 
 
-.container {
-    grid-row: 2; /* This places the container in the middle row */
-    padding: 20px;
-}
-
-.navbar {
+/* Specific Styles for Search Form */
+.instrument-search-form {
+    display: flex;
+    justify-content: center;
     margin-bottom: 20px;
 }
 
-.navbar-brand {
-    font-size: 1.6em;
+.instrument-search-form input[type="text"] {
+    width: 300px;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
 }
 
-.nav-item .nav-link {
-    font-size: 1.3em;
+.instrument-search-form input[type="text"]:focus {
+    border-color: #007bff;
+}
+
+.instrument-search-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 0 4px 4px 0;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.instrument-search-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Instrument Name Styles */
+.instrument-list a {
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.7); /* Adds a semi-transparent dark background */
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.instrument-list a:hover {
+    background-color: rgba(0, 0, 0, 0.9); /* Darkens the background on hover */
+    transform: scale(1.05); /* Slightly enlarges the text on hover */
+    color: #f8f9fa; /* Slight color change on hover for better readability */
+}
+
+/* Specific Styles for Login and Sign-Up Pages */
+.login-page, .signup-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
+}
+
+.login-page .background, .signup-page .background {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-page h2, .signup-page h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.login-page label, .signup-page label {
+    display: block;
+    margin-bottom: 5px;
+    text-align: left;
+    font-weight: bold;
     color: #555;
 }
 
-.nav-item .nav-link:hover {
-    color: #000;
+.login-page input[type="text"],
+.login-page input[type="password"],
+.signup-page input[type="text"],
+.signup-page input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.login-page input[type="submit"],
+.signup-page input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login-page input[type="submit"]:hover,
+.signup-page input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.login-page p, .signup-page p {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.login-page a, .signup-page a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.login-page a:hover, .signup-page a:hover {
+    text-decoration: underline;
 }
 
 .instrument-list {
@@ -96,13 +225,26 @@ p {
     left: 0;
 }
 
+/* Container Styles */
+.container {
+    grid-row: 2; /* This places the container in the middle row */
+    padding: 20px;
+    padding-bottom: 70px; /* Added padding at the bottom to prevent content from being covered by the footer */
+}
+
+/* Footer Styles */
 .footer {
-    grid-row: 3; /* This places the footer in the bottom row */
-    background-color: #ffff; 
+    grid-row: 3; /* Places the footer in the bottom row */
+    background-color: #ffffff; 
     position: fixed;
     text-align: center;
-    padding: 10px 0;
+    padding: 4px 0; /* Reduced padding for a thinner footer */
     width: 100%;
-    font-size: 0.1em;
+    font-size: 0.8em; /* Adjusted font size to make it smaller */
     bottom: 0;
+}
+
+.footer h2 {
+    font-size: 20px; /* Smaller font size for the footer text */
+    margin: 0; /* Remove margin to save space */
 }
