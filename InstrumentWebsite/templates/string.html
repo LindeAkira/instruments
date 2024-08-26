@@ -11,6 +11,7 @@
   <button type="submit">Search</button>
 </form>
 
+
 <!-- Display Results -->
 {% if results %}
 <ul class="instrument-list">
@@ -23,4 +24,10 @@
 {% else %}
 <p>No instruments found.</p>
 {% endif %}
+
+<!-- Return Link -->
+{% if request.args.get('search') %}
+<p><a href="{{ url_for('string') }}">Return to String Page</a></p>
+{% endif %}
+
 {% endblock %}

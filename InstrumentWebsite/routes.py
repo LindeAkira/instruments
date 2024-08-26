@@ -25,17 +25,25 @@ def sql_queries(query, params, option):
     connection = sqlite3.connect('instruments.db')
     cursor = connection.cursor()
     cursor.execute(query, params)
+
     if option == 'fetchone':
         result = cursor.fetchone()
         connection.close()
         return result
+    
     elif option == 'fetchall':
         result = cursor.fetchall()
         connection.close()
         return result
+    
     elif option == 'commit':
         connection.commit()
         connection.close()
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -92,6 +100,30 @@ def logout():
     return redirect(url_for('string'))
 
 
+@app.route('/search')
+def search():
+    print("Search route triggered")
+    search_term = request.args.get('search')
+    if search_term:
+        query = """
+        SELECT * FROM Instrument
+        WHERE name LIKE ?
+        """
+        params = ('%' + search_term + '%',)
+    else:
+        query = "SELECT * FROM Instrument"
+        params = ()
+    
+    results = sql_queries(query, params, 'fetchall')
+
+    # Debugging: Print the results to the console
+    print("Search Term:", search_term)
+    print("Results:", results)
+    
+    return render_template("search_results.html", search_term=search_term, results=results)
+
+
+
 @app.route('/comment/<int:instrument_id>', methods=['GET', 'POST'])
 def add_comment(instrument_id):
     if request.method == 'POST':
@@ -137,7 +169,7 @@ def instrument_details(instrument_id):
     """
     comments = sql_queries(comments_query, (instrument_id,), 'fetchall')
 
-    return render_template('instrument.html', instrument=instrument, page='instrument', comments=comments)
+    return render_template('instrument.html', instrument=instrument, comments=comments)
 
 
 @app.route('/delete_comment/<int:comment_id>/<int:instrument_id>', methods=['POST'])

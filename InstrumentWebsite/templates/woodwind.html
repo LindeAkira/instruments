@@ -6,8 +6,8 @@
 <h1>Woodwind Instruments</h1>
 
 <!-- Search Form -->
-<form method="GET" action="{{ url_for('string') }}" class="instrument-search-form">
-  <input type="text" name="search" placeholder="Search for a string instrument">
+<form method="GET" action="{{ url_for('woodwind') }}" class="instrument-search-form">
+  <input type="text" name="search" placeholder="Search for a woodwind instrument">
   <button type="submit">Search</button>
 </form>
 
@@ -23,4 +23,10 @@
 {% else %}
 <p>No instruments found.</p>
 {% endif %}
+
+<!-- Return Link -->
+{% if request.args.get('search') %}
+<p><a href="{{ url_for('woodwind') }}">Return to String Page</a></p>
+{% endif %}
+
 {% endblock %}
