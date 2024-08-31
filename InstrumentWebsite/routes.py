@@ -123,7 +123,6 @@ def search():
     return render_template("search_results.html", search_term=search_term, results=results)
 
 
-
 @app.route('/comment/<int:instrument_id>', methods=['GET', 'POST'])
 def add_comment(instrument_id):
     if request.method == 'POST':

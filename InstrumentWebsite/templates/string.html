@@ -5,6 +5,18 @@
 {% block content %}
 <h1>String Instruments</h1>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flashes">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
 <!-- Search Form -->
 <form method="GET" action="{{ url_for('string') }}" class="instrument-search-form">
   <input type="text" name="search" placeholder="Search for a string instrument">
