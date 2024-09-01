@@ -40,6 +40,28 @@ def sql_queries(query, params, option):
         connection.commit()
         connection.close()
 
+def validate_input(input_value, input_type):
+
+    # Validates the input value for username or password.
+
+    # Parameters:
+    # - input_value (str): The value to validate (password or username).
+    # - input_type (str): A string indicating the type of input ('password' or 'username').
+
+    # Returns:
+    # - str or None: Returns an error message if the validation fails, otherwise returns None.
+
+    if len(input_value) < 8:
+        return f"{input_type.capitalize()} must be at least 8 characters long."
+    if len(input_value) > 50:
+        return f"{input_type.capitalize()} must not exceed 50 characters."
+    if input_type == 'password':
+        if not any(char.isdigit() for char in input_value):
+            return f"{input_type.capitalize()} must contain at least one digit."
+        if not any(char.isupper() for char in input_value):
+            return f"{input_type.capitalize()} must contain at least one uppercase letter."
+    return None
+
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -52,9 +74,16 @@ def signup():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        # Validation check
-        if len(password) < 8 or not any(char.isdigit() for char in password) or not any(char.isupper() for char in password):
-            flash("Password must be at least 8 characters long, must contain at least one digit, and must contain at least one uppercase letter", "error")
+        # Validate password
+        password_error = validate_input(password, 'password')
+        if password_error:
+            flash(password_error, "error")
+            return render_template('signup.html')
+
+        # Validate username
+        username_error = validate_input(username, 'username')
+        if username_error:
+            flash(username_error, "error")
             return render_template('signup.html')
 
         # Check if username already exists
@@ -102,25 +131,35 @@ def logout():
 
 @app.route('/search')
 def search():
-    print("Search route triggered")
-    search_term = request.args.get('search')
+    search_term = request.args.get('search', '').strip()  # Ensure search_term is a string and strip any whitespace
+    
     if search_term:
-        query = """
-        SELECT * FROM Instrument
-        WHERE name LIKE ?
-        """
-        params = ('%' + search_term + '%',)
+        if len(search_term) > 50:
+            # If the search term is too long, set the result as an error message and no results
+            error_message = "Search term must be under 50 characters."
+            search_term = None  # Clear the search term to prevent it from being displayed
+            results = []  # No results will be shown
+        else:
+            query = """
+            SELECT * FROM Instrument
+            WHERE name LIKE ?
+            """
+            params = ('%' + search_term + '%',)
+            results = sql_queries(query, params, 'fetchall')
+            error_message = None  # No error
     else:
         query = "SELECT * FROM Instrument"
         params = ()
+        results = sql_queries(query, params, 'fetchall')
+        error_message = None  # No error
     
-    results = sql_queries(query, params, 'fetchall')
-
     # Debugging: Print the results to the console
     print("Search Term:", search_term)
     print("Results:", results)
     
-    return render_template("search_results.html", search_term=search_term, results=results)
+    # Pass the error message to the template, if any
+    return render_template("search_results.html", search_term=search_term, results=results, error_message=error_message)
+
 
 
 @app.route('/comment/<int:instrument_id>', methods=['GET', 'POST'])
