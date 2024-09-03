@@ -40,14 +40,13 @@ def sql_queries(query, params, option):
         connection.commit()
         connection.close()
 
+
 def validate_input(input_value, input_type):
 
     # Validates the input value for username or password.
-
     # Parameters:
     # - input_value (str): The value to validate (password or username).
     # - input_type (str): A string indicating the type of input ('password' or 'username').
-
     # Returns:
     # - str or None: Returns an error message if the validation fails, otherwise returns None.
 
@@ -66,6 +65,17 @@ def validate_input(input_value, input_type):
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    return render_template("500.html"), 500
+
+
+@app.route('/trigger-error')
+def trigger_error():
+    # This will cause a 500 error
+    raise Exception("This is a test error")
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -247,6 +257,7 @@ def string():
         params = ()
     results = sql_queries(query, params, 'fetchall')
     return render_template("string.html", page='string', results=results)
+    
 
 
 @app.route('/woodwind')
