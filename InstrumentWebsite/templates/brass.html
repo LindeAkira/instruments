@@ -5,6 +5,18 @@
 {% block content %}
 <h1>Brass Instruments</h1>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flashes">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}"> <!-- alert is a base CSS class typically used for styling alerts, with bootstrap styling -->
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
 <!-- Search Form -->
 <form method="GET" action="{{ url_for('brass') }}" class="instrument-search-form">
   <input type="text" name="search" placeholder="Search for a brass instrument">
@@ -26,7 +38,7 @@
 
 <!-- Return Link -->
 {% if request.args.get('search') %}
-<p><a href="{{ url_for('brass') }}">Return to String Page</a></p>
+<p><a href="{{ url_for('brass') }}">Return to Brass Page</a></p>
 {% endif %}
 
 {% endblock %}

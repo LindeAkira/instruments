@@ -67,6 +67,11 @@ def page_not_found(e):
     return render_template("404.html"), 404
 
 
+@app.errorhandler(414)
+def request_uri_too_long(e):
+    return render_template('414.html'), 414
+
+
 @app.errorhandler(500)
 def internal_server_error(error):
     return render_template("500.html"), 500
@@ -125,6 +130,7 @@ def login():
 
         if user and check_password(user[2], password):
             session['user_id'] = user[0]  # Store user ID in session
+            flash("Successfully logged in!", "success")
             return redirect(url_for('string'))  # Redirect to the string page
         else:
             flash('Invalid username or password.', 'error')
@@ -171,16 +177,17 @@ def search():
     return render_template("search_results.html", search_term=search_term, results=results, error_message=error_message)
 
 
-
 @app.route('/comment/<int:instrument_id>', methods=['GET', 'POST'])
 def add_comment(instrument_id):
+    # Check if the user is logged in
+    user_id = session.get('user_id')
+    
+    if not user_id:
+        flash("You need to be logged in to add a comment.", "error")
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
         comment_text = request.form.get('comment')
-        user_id = session.get('user_id')
-
-        if not user_id:
-            flash("You need to be logged in to add a comment.", "error")
-            return redirect(url_for('login'))
 
         if not comment_text:
             flash("Comment cannot be empty.", "error")
@@ -204,9 +211,18 @@ def add_comment(instrument_id):
 # Individual instrument details page.
 @app.route('/instrument/<int:instrument_id>')
 def instrument_details(instrument_id):
+
+    # Check if the instrument_id is below 127
+    if instrument_id > 126:
+        return render_template('404.html')
+
     # Fetch the instrument details
     instrument_query = "SELECT * FROM Instrument WHERE id = ?"
     instrument = sql_queries(instrument_query, (instrument_id,), 'fetchone')
+
+    # If the instrument is not found, return a 404
+    if instrument is None:
+        return render_template('404.html'), 404
 
     # Fetch the comments with usernames
     comments_query = """
@@ -248,28 +264,50 @@ def delete_comment(comment_id, instrument_id):
 
 @app.route('/string')
 def string():
-    search_term = request.args.get('search')
+    search_term = request.args.get('search', '').strip()  # Ensure search_term is a string and strip any whitespace
+    
     if search_term:
-        query = "SELECT * FROM Instrument WHERE familyid = 1 AND name LIKE ?"
-        params = ('%' + search_term + '%',)
+        if len(search_term) > 50:
+            flash("Search term must be under 50 characters.", "error")
+            search_term = None  # Clear the search term to prevent a query
+            results = []  # No results should be shown
+        else:
+            query = "SELECT * FROM Instrument WHERE familyid = 1 AND name LIKE ?"
+            params = ('%' + search_term + '%',)
+            results = sql_queries(query, params, 'fetchall')
     else:
         query = "SELECT * FROM Instrument WHERE familyid = 1"
         params = ()
-    results = sql_queries(query, params, 'fetchall')
-    return render_template("string.html", page='string', results=results)
-    
+        results = sql_queries(query, params, 'fetchall')
+
+    # Debugging: Print the results to the console
+    print("Search Term:", search_term)
+    print("Results:", results)
+
+    return render_template("string.html", page='string', results=results) 
 
 
 @app.route('/woodwind')
 def woodwind():
     search_term = request.args.get('search')
     if search_term:
-        query = "SELECT id, name FROM Instrument WHERE familyid = 2 AND name LIKE ?"
-        params = ('%' + search_term + '%',)
+        if len(search_term) > 50:
+            flash("Search term must be under 50 characters.", "error")
+            search_term = None  # Clear the search term to prevent a query
+            results = []  # No results should be shown
+        else:
+            query = "SELECT * FROM Instrument WHERE familyid = 2 AND name LIKE ?"
+            params = ('%' + search_term + '%',)
+            results = sql_queries(query, params, 'fetchall')
     else:
         query = "SELECT id, name FROM Instrument WHERE familyid = 2"
         params = ()
-    results = sql_queries(query, params, 'fetchall')
+        results = sql_queries(query, params, 'fetchall')
+
+    # Debugging: Print the results to the console
+    print("Search Term:", search_term)
+    print("Results:", results)
+
     return render_template("woodwind.html", page='woodwind', results=results)
 
 
@@ -277,12 +315,23 @@ def woodwind():
 def brass():
     search_term = request.args.get('search')
     if search_term:
-        query = "SELECT id, name FROM Instrument WHERE familyid = 3 AND name LIKE ?"
-        params = ('%' + search_term + '%',)
+        if len(search_term) > 50:
+            flash("Search term must be under 50 characters.", "error")
+            search_term = None  # Clear the search term to prevent a query
+            results = []  # No results should be shown
+        else:
+            query = "SELECT * FROM Instrument WHERE familyid = 3 AND name LIKE ?"
+            params = ('%' + search_term + '%',)
+            results = sql_queries(query, params, 'fetchall')
     else:
         query = "SELECT id, name FROM Instrument WHERE familyid = 3"
         params = ()
-    results = sql_queries(query, params, 'fetchall')
+        results = sql_queries(query, params, 'fetchall')
+
+    # Debugging: Print the results to the console
+    print("Search Term:", search_term)
+    print("Results:", results)
+
     return render_template("brass.html", page='brass', results=results)
 
 
@@ -290,12 +339,23 @@ def brass():
 def percussion():
     search_term = request.args.get('search')
     if search_term:
-        query = "SELECT id, name FROM Instrument WHERE familyid = 4 AND name LIKE ?"
-        params = ('%' + search_term + '%',)
+        if len(search_term) > 50:
+            flash("Search term must be under 50 characters.", "error")
+            search_term = None  # Clear the search term to prevent a query
+            results = []  # No results should be shown
+        else:
+            query = "SELECT * FROM Instrument WHERE familyid = 4 AND name LIKE ?"
+            params = ('%' + search_term + '%',)
+            results = sql_queries(query, params, 'fetchall')
     else:
         query = "SELECT id, name FROM Instrument WHERE familyid = 4"
         params = ()
-    results = sql_queries(query, params, 'fetchall')
+        results = sql_queries(query, params, 'fetchall')
+
+    # Debugging: Print the results to the console
+    print("Search Term:", search_term)
+    print("Results:", results)
+
     return render_template("percussion.html", page='percussion', results=results)
 
 

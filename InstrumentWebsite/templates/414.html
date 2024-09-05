@@ -28,10 +28,10 @@
     </style>
 </head>
 <body>
-    <h1>500 - Server Error</h1>
-    <p>Oops! Something went wrong on our end.</p>
-    <a href="/string" >Go Back to String page</a>
+    <div class="container">
+        <h1>414 - Request-URI Too Long</h1>
+        <p>Sorry, the request you made is too long for the server to handle.</p>
+        <p>Please try to shorten your request or <a href="{{ url_for('string') }}">return to the string page</a>.</p>
+    </div>
 </body>
 </html>
-
-
