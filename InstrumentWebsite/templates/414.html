@@ -3,35 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Error</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-        }
-        h1 {
-            font-size: 50px;
-            color: #ff0000;
-        }
-        p {
-            font-size: 20px;
-            color: #555;
-        }
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <title>414 - Request-URI Too Long</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-    <div class="container">
-        <h1>414 - Request-URI Too Long</h1>
-        <p>Sorry, the request you made is too long for the server to handle.</p>
-        <p>Please try to shorten your request or <a href="{{ url_for('string') }}">return to the string page</a>.</p>
-    </div>
+<body class="error-page">
+    <h1>414 - Request-URI Too Long</h1>
+    <p>The requested URL is too long for the server to process.</p>
+    <a href="/string">Go Back to String page</a>
 </body>
 </html>

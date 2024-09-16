@@ -9,6 +9,7 @@
     <p>{{ instrument[3] }}</p> 
 
     <!-- Flash messages -->
+    <!-- To retrieve the flashed messages from the session and assign them to the variable messages. Theya re retrieved in the form of a tuple-->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <ul class="flashes">

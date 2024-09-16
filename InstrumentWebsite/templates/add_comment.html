@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1>Add a Comment</h1>
-
+    <!-- Goes to the url of the route with any arguments -->
     <form action="{{ url_for('add_comment', instrument_id=instrument_id) }}" method="post">
         <label for="comment">Comment:</label><br>
         <textarea id="comment" name="comment" rows="4" cols="50"></textarea><br><br>
