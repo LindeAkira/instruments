@@ -3,6 +3,14 @@
 {% block title %}Search Results{% endblock %}
 
 {% block content %}
+<div class="flash-messages">
+    {% if error_message %}
+        <div class="flash alert-danger">
+            {{ error_message }}
+        </div>
+    {% endif %}
+</div>
+
 <div class="container">
     {% if search_term %}
         <h1>Search Results for "{{ search_term }}"</h1>

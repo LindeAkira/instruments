@@ -137,14 +137,23 @@ def login():
             "SELECT * FROM Users WHERE username = ?", (username,), 'fetchone'
         )
 
-        if user and check_password(user[2], password):
+        if user and check_password(user[2], password):  # Check password validity
             session['user_id'] = user[0]  # Store user ID in session
+
+            # Check if the user is an admin
+            if user[3] == 1:
+                session['is_admin'] = True
+
+            # Debugging: print the session to see if is_admin and user_id are set
+            print(session)  # Add this line here for debugging
+
             flash("Successfully logged in!", "success")
             return redirect(url_for('string'))  # Redirect to the string page
         else:
             flash('Invalid username or password.', 'error')
     
     return render_template('login.html', page='login')
+
 
 
 @app.route('/logout')
@@ -187,35 +196,28 @@ def search():
 @app.route('/instrument/<int:instrument_id>')
 def instrument_details(instrument_id):
     try:
-        # Query the instrument from the database
         instrument_query = "SELECT * FROM Instrument WHERE id = ?"
         instrument = sql_queries(instrument_query, (instrument_id,), 'fetchone')
 
         if instrument is None:
             return render_template('404.html'), 404
 
-        # Query comments related to the instrument
+        # Query comments related to the instrument where comment_status is 1
         comments_query = """
-        SELECT Comments.id, Comments.unchecked_comment, Comments.checked_comment, 
-               Users.username, Comments.user_id
+        SELECT Comments.id, Comments.comment, Users.username, Comments.user_id
         FROM Comments
         JOIN Users ON Comments.user_id = Users.id
-        WHERE Comments.instrument_id = ?
+        WHERE Comments.instrument_id = ? AND Comments.comment_status = 1
         """
         comments = sql_queries(comments_query, (instrument_id,), 'fetchall')
 
         return render_template('instrument.html', instrument=instrument, comments=comments)
 
     except ValueError:
-        # If the instrument_id is too large or invalid, handle it here
         return render_template('414.html'), 414
-
     except OverflowError:
-        # You can also catch OverflowError in case the ID causes an overflow
         return render_template('414.html'), 414
-
     except Exception as e:
-        # Handle any other exceptions and show a generic error page
         return render_template('500.html', error_message=str(e)), 500
 
 
@@ -250,6 +252,40 @@ def add_comment(instrument_id):
             return render_template('add_comment.html', instrument_id=instrument_id)
 
     return render_template('add_comment.html', instrument_id=instrument_id)
+
+
+@app.route('/admin/comments', methods=['GET', 'POST'])
+def admin_comments():
+    # Check if the user is an admin
+    if not session.get('is_admin'):
+        flash("You do not have permission to view this page.", 'error')
+        return redirect(url_for('string'))
+
+    # Fetch all comments and order by instrument_id
+    comments_query = """
+    SELECT Comments.id, Comments.comment, Comments.comment_status, 
+           Users.username, Instrument.name, Comments.instrument_id
+    FROM Comments
+    JOIN Users ON Comments.user_id = Users.id
+    JOIN Instrument ON Comments.instrument_id = Instrument.id
+    ORDER BY Comments.instrument_id
+    """
+    comments = sql_queries(comments_query, (), 'fetchall')
+
+    if request.method == 'POST':
+        comment_id = request.form.get('comment_id')
+        new_status = request.form.get('status')
+
+        # Update the comment status in the database
+        update_query = "UPDATE Comments SET comment_status = ? WHERE id = ?"
+        sql_queries(update_query, (new_status, comment_id), 'commit')
+
+        flash('Comment status updated successfully.', 'success')
+        return redirect(url_for('admin_comments'))
+
+    return render_template('admin_comments.html', comments=comments)
+
+
 
 
 @app.route('/delete_comment/<int:comment_id>/<int:instrument_id>', methods=['POST'])

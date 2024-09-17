@@ -3,27 +3,25 @@
 {% block title %}String Instruments{% endblock %}
 
 {% block content %}
+<div class="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flash-messages-list">
+                {% for category, message in messages %}
+                    <li class="flash {{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</div>
+
 <h1>String Instruments</h1>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div class="flashes">
-      {% for category, message in messages %}
-      <div class="alert alert-{{ category }}"> <!-- alert is a base CSS class typically used for styling alerts, with bootstrap styling -->
-          {{ message }}
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
-
-<!-- Search Form -->
 <form method="GET" action="{{ url_for('string') }}" class="instrument-search-form">
   <input type="text" name="search" placeholder="Search for a string instrument">
   <button type="submit">Search</button>
 </form>
 
-<!-- Display Results -->
 {% if results %}
 <ul class="instrument-list">
   {% for instrument in results %}
@@ -36,9 +34,7 @@
 <p>No instruments found.</p>
 {% endif %}
 
-<!-- Return Link -->
 {% if request.args.get('search') %}
 <p><a href="{{ url_for('string') }}">Return to String Page</a></p>
 {% endif %}
-
 {% endblock %}

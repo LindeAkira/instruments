@@ -3,25 +3,24 @@
 {% block title %}Instruments{% endblock %}
 
 {% block content %}
-  <div id="content">
-  <h1>Details for {{ instrument[1] }}</h1> 
-    <img src="{{ instrument[4] }}" alt="Image of {{ instrument[1] }}">
-    <p>{{ instrument[3] }}</p> 
-
-    <!-- Flash messages -->
-    <!-- To retrieve the flashed messages from the session and assign them to the variable messages. Theya re retrieved in the form of a tuple-->
+  <div class="flash-messages">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            <ul class="flashes">
+            <ul class="flash-messages-list">
                 {% for category, message in messages %}
                     <li class="flash {{ category }}">{{ message }}</li>
                 {% endfor %}
             </ul>
         {% endif %}
     {% endwith %}
+  </div>
+
+  <div id="content">
+    <h1>Details for {{ instrument[1] }}</h1> 
+    <img src="{{ instrument[4] }}" alt="Image of {{ instrument[1] }}">
+    <p>{{ instrument[3] }}</p> 
 
     <h2>Comments</h2>
-
     {% if comments %}
     <ul>
       {% for comment in comments %}

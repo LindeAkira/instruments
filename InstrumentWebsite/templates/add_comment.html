@@ -3,24 +3,24 @@
 {% block title %}Add a Comment{% endblock %}
 
 {% block content %}
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages-list">
+                    {% for category, message in messages %}
+                        <li class="flash {{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+
     <h1>Add a Comment</h1>
-    <!-- Goes to the url of the route with any arguments -->
     <form action="{{ url_for('add_comment', instrument_id=instrument_id) }}" method="post">
         <label for="comment">Comment:</label><br>
         <textarea id="comment" name="comment" rows="4" cols="50"></textarea><br><br>
         <input type="submit" value="Submit">
     </form>
-
-    <!-- Flash messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul class="flashes">
-                {% for category, message in messages %}
-                    <li class="flash {{ category }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
 
     <a href="{{ url_for('instrument_details', instrument_id=instrument_id) }}">Back to Instrument</a>
 {% endblock %}

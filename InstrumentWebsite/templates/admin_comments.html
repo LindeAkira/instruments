@@ -1,37 +1,46 @@
 {% extends 'layout.html' %}
 
-{% block title %}String Instruments{% endblock %}
-
 {% block content %}
-<h2>Admin - Manage Comments</h2>
+<div class="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-message">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+</div>
 
-<table>
-    <tr>
-        <th>Username</th>
-        <th>Instrument</th>
-        <th>Comment</th>
-        <th>Status</th>
-        <th>Action</th>
-    </tr>
-    {% for comment in comments %}
-    <tr>
-        <td>{{ comment[3] }}</td>
-        <td>{{ comment[4] }}</td>
-        <td>{{ comment[1] }}</td>
-        <td>{{ 'Approved' if comment[2] == 1 else 'Pending' }}</td>
-        <td>
-            <form method="POST" action="{{ url_for('admin_comments') }}">
-                <input type="hidden" name="comment_id" value="{{ comment[0] }}">
-                <select name="status">
-                    <option value="1" {% if comment[2] == 1 %} selected {% endif %}>Approve</option>
-                    <option value="0" {% if comment[2] == 0 %} selected {% endif %}>Reject</option>
-                </select>
-                <button type="submit">Update</button>
-            </form>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-
-
+<div class="admin-comments-page">
+    <h2>Admin - Manage Comments</h2>
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Instrument</th>
+            <th>Comment</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for comment in comments %}
+        <tr>
+            <td>{{ comment[3] }}</td>
+            <td>{{ comment[4] }}</td>
+            <td>{{ comment[1] }}</td>
+            <td>{{ 'Approved' if comment[2] == 1 else 'Rejected' }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('admin_comments') }}">
+                    <input type="hidden" name="comment_id" value="{{ comment[0] }}">
+                    <select name="status">
+                        <option value="1" {% if comment[2] == 1 %} selected {% endif %}>Approve</option>
+                        <option value="0" {% if comment[2] == 0 %} selected {% endif %}>Reject</option>
+                    </select>
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}

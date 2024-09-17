@@ -202,6 +202,107 @@ p {
     color: rgb(0, 0, 0);
 }
 
+/* Admin Comments Page Styles */
+.admin-comments-page {
+    background-color: #f9f9f9;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.admin-comments-page h2 {
+    font-size: 26px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Table Styles */
+.admin-comments-page table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.admin-comments-page table th,
+.admin-comments-page table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.admin-comments-page table th {
+    background-color: #f1f1f1;
+    color: #555;
+    font-weight: bold;
+}
+
+.admin-comments-page table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.admin-comments-page table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Form Styles */
+.admin-comments-page select {
+    padding: 6px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.admin-comments-page button {
+    padding: 8px 16px;
+    background-color: #28a745;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.admin-comments-page button:hover {
+    background-color: #218838;
+}
+
+.flash-messages {
+    margin-bottom: 20px;
+}
+
+.flash-message, .flash-messages-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.flash {
+    padding: 15px;
+    border-radius: 5px;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.flash.success {
+    background-color: #28a745; /* Green for success */
+}
+
+.flash.error {
+    background-color: #dc3545; /* Red for error */
+}
+
+.flash.warning {
+    background-color: #ffc107; /* Yellow for warnings */
+}
+
+.flash.info {
+    background-color: #17a2b8; /* Blue for informational messages */
+}
+
+
+
+
 /* Error Page Styles - 404, 500, 414 */
 .error-page {
     font-family: Arial, sans-serif;
