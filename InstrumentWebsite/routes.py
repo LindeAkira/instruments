@@ -42,15 +42,8 @@ def validate_input(input_value, input_type):
     """
     Validates the input value for username or password.
     
-    Parameters:
-        input_value (str): The value to validate (password or username).
-        input_type (str): A string indicating the type of input ('password' or 'username').
-    
-    .capotalize capitalises the first character of the string
-    
-    Returns:
-        str or None: An error message if validation fails, otherwise None.
-
+    Takes the input and which of username of password it is.
+    Chekcs if it is valid by checking the length and what it contains e.g. digit, uppercase.
     """
     if len(input_value) < 8:
         return f"{input_type.capitalize()} must be at least 8 characters long."
@@ -159,7 +152,7 @@ def login():
 @app.route('/logout')
 def logout():
     # The parameter None is passed to not raise an error if the user logs out without logging in
-    session.pop('user_id', None)
+    session.clear()  # clear all session data
     flash("You have been logged out", "success")
     return redirect(url_for('string'))
 
@@ -175,10 +168,9 @@ def search():
             search_term = None
             results = []
         else:
-            query = "SELECT * FROM Instrument WHERE name LIKE ?"
+            query = query = "SELECT id, name, image FROM Instrument WHERE name LIKE ?"
             params = ('%' + search_term + '%',)
             # %: Matches any sequence of characters, including an empty sequence.
-            # For example, %abc% matches any string that contains it such as abc, 123abc456
             results = sql_queries(query, params, 'fetchall')
             error_message = None
     else:
@@ -196,7 +188,14 @@ def search():
 @app.route('/instrument/<int:instrument_id>')
 def instrument_details(instrument_id):
     try:
-        instrument_query = "SELECT * FROM Instrument WHERE id = ?"
+        # Query to get instrument data including the family_id
+        instrument_query = """
+        SELECT Instrument.id, Instrument.name, Instrument.description, 
+        Instrument.image, InstrumentFamily.id, InstrumentFamily.name
+        FROM Instrument
+        JOIN InstrumentFamily ON Instrument.familyid = InstrumentFamily.id
+        WHERE Instrument.id = ?
+        """
         instrument = sql_queries(instrument_query, (instrument_id,), 'fetchone')
 
         if instrument is None:
@@ -211,6 +210,7 @@ def instrument_details(instrument_id):
         """
         comments = sql_queries(comments_query, (instrument_id,), 'fetchall')
 
+        # Pass instrument data and family to the template
         return render_template('instrument.html', instrument=instrument, comments=comments)
 
     except ValueError:
@@ -240,10 +240,10 @@ def add_comment(instrument_id):
         unchecked_comment = comment_text
         try:
             query = """
-            INSERT INTO Comments (instrument_id, user_id, unchecked_comment, checked_comment) 
+            INSERT INTO Comments (instrument_id, user_id, comment, comment_status) 
             VALUES (?, ?, ?, ?)
             """
-            params = (instrument_id, user_id, unchecked_comment, "")
+            params = (instrument_id, user_id, unchecked_comment, 0)
             sql_queries(query, params, 'commit')
             flash("Comment added successfully and will be displayed after being profanity checked.", "success")
             return redirect(url_for('instrument_details', instrument_id=instrument_id))
@@ -322,16 +322,16 @@ def string():
             search_term = None
             results = []
         else:
-            query = "SELECT * FROM Instrument WHERE familyid = 1 AND name LIKE ?"
+            query = "SELECT id, name, image FROM Instrument WHERE familyid = 1 AND name LIKE ?"
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
     else:
-        query = "SELECT * FROM Instrument WHERE familyid = 1"
+        query = "SELECT id, name, image FROM Instrument WHERE familyid = 1"
         params = ()
         results = sql_queries(query, params, 'fetchall')
 
-    return render_template("string.html", page='string', results=results) 
-
+    return render_template("string.html", page='string', results=results)
+ 
 
 @app.route('/woodwind')
 def woodwind():
@@ -343,11 +343,11 @@ def woodwind():
             search_term = None
             results = []
         else:
-            query = "SELECT * FROM Instrument WHERE familyid = 2 AND name LIKE ?"
+            query = "SELECT id, name, image FROM Instrument WHERE familyid = 2 AND name LIKE ?"
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
     else:
-        query = "SELECT * FROM Instrument WHERE familyid = 2"
+        query = "SELECT id, name, image FROM Instrument WHERE familyid = 2"
         params = ()
         results = sql_queries(query, params, 'fetchall')
 
@@ -363,11 +363,11 @@ def brass():
             search_term = None  # Clear the search term to prevent a query
             results = []  # No results should be shown
         else:
-            query = "SELECT * FROM Instrument WHERE familyid = 3 AND name LIKE ?"
+            query = "SELECT id, name, image FROM Instrument WHERE familyid = 3 AND name LIKE ?"
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
     else:
-        query = "SELECT id, name FROM Instrument WHERE familyid = 3"
+        query = "SELECT id, name, image FROM Instrument WHERE familyid = 3"
         params = ()
         results = sql_queries(query, params, 'fetchall')
 
@@ -387,11 +387,11 @@ def percussion():
             search_term = None  # Clear the search term to prevent a query
             results = []  # No results should be shown
         else:
-            query = "SELECT * FROM Instrument WHERE familyid = 4 AND name LIKE ?"
+            query = "SELECT id, name, image FROM Instrument WHERE familyid = 4 AND name LIKE ?"
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
     else:
-        query = "SELECT id, name FROM Instrument WHERE familyid = 4"
+        query = "SELECT id, name, image FROM Instrument WHERE familyid = 4"
         params = ()
         results = sql_queries(query, params, 'fetchall')
 

@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-<body>
+<body class="{% if messages %}has-flash-messages{% else %}no-flash-messages{% endif %}">
+    <div class="container-with-background">
+
     <nav>   
         {% include "nav.html" %}
     </nav>
@@ -25,6 +27,8 @@
             <hr>
             <h2>&copy; 2024 Akira Lindeman</h2>
         </footer>
+
+    </div>
     
 </body>
 

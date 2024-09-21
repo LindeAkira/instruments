@@ -23,9 +23,12 @@
         {% if results %}
             <ul class="instrument-list">
                 {% for instrument in results %}
-                    <li class="instrument-item">
-                        <a href="/instrument/{{ instrument[0] }}">{{ instrument[1] }}</a>
-                    </li>
+                <div class="instrument-button">
+                    <a href="{{ url_for('instrument_details', instrument_id=instrument[0]) }}">
+                        <img src="{{ instrument[2] }}" alt="{{ instrument[1] }} Image">
+                        <span>{{ instrument[1] }}</span>
+                    </a>
+                </div>
                 {% endfor %}
             </ul>
         {% else %}

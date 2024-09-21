@@ -18,18 +18,20 @@
 <h1>Percussion Instruments</h1>
 
 <form method="GET" action="{{ url_for('percussion') }}" class="instrument-search-form">
-  <input type="text" name="search" placeholder="Search for a percussion instrument">
+  <input type="text" name="search" placeholder="Search for a percussion instrument" maxlength="50">
   <button type="submit">Search</button>
 </form>
 
 {% if results %}
-<ul class="instrument-list">
+<div class="instrument-list">
   {% for instrument in results %}
-    <li class="instrument">
-      <a href="{{ url_for('instrument_details', instrument_id=instrument[0]) }}">{{ instrument[1] }}</a>
-    </li>
-  {% endfor %}
-</ul>
+      <div class="instrument-button">
+          <a href="{{ url_for('instrument_details', instrument_id=instrument[0]) }}">
+              <img src="{{ instrument[2] }}" alt="{{ instrument[1] }} Image">
+              <span>{{ instrument[1] }}</span>
+          </a>
+      </div>
+    {% endfor %}
 {% else %}
 <p>No instruments found.</p>
 {% endif %}

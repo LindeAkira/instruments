@@ -37,18 +37,54 @@ body {
     position: relative;
     z-index: 1; /* Make sure the content is above the background */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 10px; /* Default padding for body */
 
     h1 {
         font-size: 36px;
-        padding-top: 24px;
     }
 
     h2 {
         font-size: 22px;
     }
-
 }
 
+/* Increase top padding when there are flash messages */
+.flash-messages.has-messages {
+    padding-top: 50px;
+}
+
+/* Default padding if no messages */
+.flash-messages.no-messages {
+    padding-top: 10px;
+}
+
+.flash-message, .flash-messages-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.flash {
+    padding: 15px;
+    color: #fff;
+}
+
+.flash.success {
+    background-color: #28a745; /* Green for success */
+}
+
+.flash.error {
+    background-color: #dc3545; /* Red for error */
+}
+
+.flash.warning {
+    background-color: #ffc107; /* Yellow for warnings */
+}
+
+
+
+
+/* Existing background and blur */
 body::before {
     content: "";
     position: fixed;
@@ -61,11 +97,24 @@ body::before {
     background-position: center;
     background-attachment: fixed;
     background-size: cover;
-    filter: blur(10px); /* Adjust the blur level as needed */
-    z-index: -1; /* Place the blurred background behind the content */
-    pointer-events: none; /* Prevent the blurred background from interfering with interactions */
+    filter: blur(10px); /* Keep this blur */
+    z-index: -1; /* Ensure it stays behind content */
+    pointer-events: none;
 }
 
+/* Main content container */
+.container-with-background {
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    padding: 20px; /* Add some padding around content */
+    max-width: 90%; /* Set maximum width as a percentage */
+    width: 100%; /* Full width on smaller screens */
+    margin: 40px auto; /* Center content */
+    border-radius: 10px; /* Optional: rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: subtle shadow for depth */
+}
+
+    
+  
 
 /* Specific Styles for Search Form */
 .instrument-search-form {
@@ -104,6 +153,7 @@ body::before {
     padding: 10px;
     border-radius: 5px;
     text-align: center;
+    transition: transform 0.2s ease, background-color 0.2s ease; /* Smooth transition for hover effects */
 }
 
 .instrument-list a:hover {
@@ -112,14 +162,30 @@ body::before {
 }
 
 .instrument-list {
-    list-style-type: none;
-    padding-left: 50px;
-    margin: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 20px;
-  }
-  
+    justify-items: center; /* Centers the grid items */
+}
+
+
+.instrument-button img {
+    width: 150px;  /* Adjusted to a larger size */
+    height: 150px; /* Keep uniform size */
+    object-fit: cover; /* Ensures the image doesn't stretch and maintains aspect ratio */
+    margin: 0 auto; /* Centers the image within its container */
+}
+
+.instrument-button {
+    display: inline-block;
+    text-align: center;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Adds a subtle shadow for a more defined look */
+}
+
 
 /* Specific Styles for Login and Sign-Up Pages */
 .login-page, .signup-page {
@@ -132,8 +198,8 @@ body::before {
 }
 
 .login-page .background, .signup-page .background {
-    /* background: #fff; */
-    border-radius: 50px;
+    background: #fff;
+    border-radius: 10px;
     padding: 20px;
     width: 100%;
     max-width: 390px;
@@ -202,6 +268,100 @@ p {
     color: rgb(0, 0, 0);
 }
 
+
+.instrument-image {
+    max-width: 100%;  /* Ensures the image doesn't exceed the container's width */
+    max-height: 400px;  /* Controls the height */
+    width: auto;  /* Ensures the image scales proportionally */
+    height: auto;  /* Ensures the image scales proportionally */
+    object-fit: contain;  /* Ensures the entire image fits within the defined dimensions */
+    border-radius: 10px;  /* add rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* adds shadow for depth */
+    margin: 0 auto;  /* Center the image */
+    display: block;  /* Center the image as a block element */
+}
+
+
+/* Comment Page Styles */
+.comment-form {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.comment-form label {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.comment-form .submit-button {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.comment-form .submit-button:hover {
+    background-color: #0056b3;
+}
+
+/* Flash messages styling */
+.flash-messages {
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.flash-messages-list {
+    list-style: none;
+    padding: 0;
+}
+
+.flash {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+.flash.success {
+    background-color: #28a745;
+}
+
+.flash.error {
+    background-color: #dc3545;
+}
+
+/* Back link styling */
+.back-link {
+    display: block;
+    margin: 20px 0;
+    font-size: 1.1em;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+
 /* Admin Comments Page Styles */
 .admin-comments-page {
     background-color: #f9f9f9;
@@ -267,40 +427,6 @@ p {
     background-color: #218838;
 }
 
-.flash-messages {
-    margin-bottom: 20px;
-}
-
-.flash-message, .flash-messages-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.flash {
-    padding: 15px;
-    border-radius: 5px;
-    color: #fff;
-    margin-bottom: 10px;
-}
-
-.flash.success {
-    background-color: #28a745; /* Green for success */
-}
-
-.flash.error {
-    background-color: #dc3545; /* Red for error */
-}
-
-.flash.warning {
-    background-color: #ffc107; /* Yellow for warnings */
-}
-
-.flash.info {
-    background-color: #17a2b8; /* Blue for informational messages */
-}
-
-
 
 
 /* Error Page Styles - 404, 500, 414 */
@@ -352,15 +478,16 @@ p {
 
 /* Footer Styles */
 .footer {
-    grid-row: 3; /* Places the footer in the bottom row */
-    background-color: #ffffff; 
     position: fixed;
-    text-align: center;
-    padding: 4px 0; /* Reduced padding for a thinner footer */
-    width: 100%;
-    font-size: 0.8em; /* Adjusted font size to make it smaller */
     bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    text-align: center;
+    padding: 5px 0;
 }
+
+
 
 .footer h2 {
     font-size: 20px; /* Smaller font size for the footer text */
