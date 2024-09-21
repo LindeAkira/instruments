@@ -236,20 +236,22 @@ def add_comment(instrument_id):
             flash("Comment cannot be empty.", "error")
             return render_template('add_comment.html', 
                                    instrument_id=instrument_id)
-
-        unchecked_comment = comment_text
+        comment = comment_text
         try:
             query = """
             INSERT INTO Comments (instrument_id, user_id, comment, comment_status) 
             VALUES (?, ?, ?, ?)
             """
-            params = (instrument_id, user_id, unchecked_comment, 0)
+            params = (instrument_id, user_id, comment, 0)
             sql_queries(query, params, 'commit')
-            flash("Comment added successfully and will be displayed after being profanity checked.", "success")
+            flash("Comment added and will display after profanity check.", "success")
             return redirect(url_for('instrument_details', instrument_id=instrument_id))
+        except ValueError:
+            return render_template('414.html'), 414
+        except OverflowError:
+            return render_template('414.html'), 414
         except Exception as e:
-            flash(f"An error occurred: {e}", "error")
-            return render_template('add_comment.html', instrument_id=instrument_id)
+            return render_template('500.html', error_message=str(e)), 500
 
     return render_template('add_comment.html', instrument_id=instrument_id)
 
@@ -286,8 +288,6 @@ def admin_comments():
     return render_template('admin_comments.html', comments=comments)
 
 
-
-
 @app.route('/delete_comment/<int:comment_id>/<int:instrument_id>', methods=['POST'])
 def delete_comment(comment_id, instrument_id):
     user_id = session.get('user_id')
@@ -322,7 +322,9 @@ def string():
             search_term = None
             results = []
         else:
-            query = "SELECT id, name, image FROM Instrument WHERE familyid = 1 AND name LIKE ?"
+            query = """
+            SELECT id, name, image FROM Instrument WHERE familyid = 1 AND name LIKE ?
+            """
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
     else:
@@ -343,7 +345,9 @@ def woodwind():
             search_term = None
             results = []
         else:
-            query = "SELECT id, name, image FROM Instrument WHERE familyid = 2 AND name LIKE ?"
+            query = """
+            SELECT id, name, image FROM Instrument WHERE familyid = 2 AND name LIKE ?
+            """
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
     else:
@@ -363,7 +367,9 @@ def brass():
             search_term = None  # Clear the search term to prevent a query
             results = []  # No results should be shown
         else:
-            query = "SELECT id, name, image FROM Instrument WHERE familyid = 3 AND name LIKE ?"
+            query = """
+            SELECT id, name, image FROM Instrument WHERE familyid = 3 AND name LIKE ?
+            """
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
     else:
@@ -387,7 +393,9 @@ def percussion():
             search_term = None  # Clear the search term to prevent a query
             results = []  # No results should be shown
         else:
-            query = "SELECT id, name, image FROM Instrument WHERE familyid = 4 AND name LIKE ?"
+            query = """
+            SELECT id, name, image FROM Instrument WHERE familyid = 4 AND name LIKE ?
+            """
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
     else:

@@ -82,9 +82,7 @@ body {
 }
 
 
-
-
-/* Existing background and blur */
+/* Body Background with Blur */
 body::before {
     content: "";
     position: fixed;
@@ -97,7 +95,7 @@ body::before {
     background-position: center;
     background-attachment: fixed;
     background-size: cover;
-    filter: blur(10px); /* Keep this blur */
+    filter: blur(10px); /* Keep the blur effect */
     z-index: -1; /* Ensure it stays behind content */
     pointer-events: none;
 }
@@ -105,16 +103,11 @@ body::before {
 /* Main content container */
 .container-with-background {
     background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
-    padding: 20px; /* Add some padding around content */
     max-width: 90%; /* Set maximum width as a percentage */
     width: 100%; /* Full width on smaller screens */
     margin: 40px auto; /* Center content */
     border-radius: 10px; /* Optional: rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: subtle shadow for depth */
 }
-
-    
-  
 
 /* Specific Styles for Search Form */
 .instrument-search-form {
@@ -364,22 +357,24 @@ p {
 
 /* Admin Comments Page Styles */
 .admin-comments-page {
-    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    background-color: white;
     padding: 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 1000px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
-.admin-comments-page h2 {
-    font-size: 26px;
-    color: #333;
-    margin-bottom: 20px;
-}
-
-/* Table Styles */
 .admin-comments-page table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    background-color: white;
+    table-layout: fixed;  /* Make sure table width is fixed */
 }
 
 .admin-comments-page table th,
@@ -387,6 +382,31 @@ p {
     padding: 12px 15px;
     border: 1px solid #ddd;
     text-align: left;
+}
+
+/* Specific width for columns */
+.admin-comments-page table th:nth-child(1),
+.admin-comments-page table td:nth-child(1) {
+    width: 15%; /* Username column */
+}
+
+.admin-comments-page table th:nth-child(2),
+.admin-comments-page table td:nth-child(2) {
+    width: 20%; /* Instrument column */
+}
+
+.admin-comments-page table th:nth-child(3),
+.admin-comments-page table td:nth-child(3) {
+    width: 50%; /* Comment column */
+    white-space: normal; /* Ensure text wraps */
+    word-wrap: break-word; /* Break long words */
+}
+
+.admin-comments-page table th:nth-child(4),
+.admin-comments-page table td:nth-child(4),
+.admin-comments-page table th:nth-child(5),
+.admin-comments-page table td:nth-child(5) {
+    width: 15%; /* Status and Action columns */
 }
 
 .admin-comments-page table th {
@@ -426,7 +446,6 @@ p {
 .admin-comments-page button:hover {
     background-color: #218838;
 }
-
 
 
 /* Error Page Styles - 404, 500, 414 */
