@@ -16,36 +16,44 @@
   </div>
 
   <div id="content">
-    <h1>Details for {{ instrument[1] }}</h1> 
-    <img src="{{ instrument[3] }}" alt="Image of {{ instrument[1] }}" class="instrument-image">
+    {% if instrument %}
 
-    <p>{{ instrument[2] }}</p> 
+      <h1>Details for the {{ instrument[1] }}</h1> 
+      <img src="{{ instrument[3] }}" alt="Image of {{ instrument[1] }}" class="instrument-image">
+      <p>{{ instrument[2] }}</p> 
 
-    <h2>Comments</h2>
-    {% if comments %}
-    <ul>
-      {% for comment in comments %}
-        <li>
-          <strong>{{ comment[2] }}</strong>: {{ comment[1] }}
-          {% if session.get('user_id') == comment[3] %}
-          <form action="{{ url_for('delete_comment', comment_id=comment[0], instrument_id=instrument[0]) }}" method="post" style="display:inline;">
-              <input type="submit" value="Delete" class="btn btn-danger btn-sm">
-          </form>
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ul>
+      <h2>Comments</h2>
+      {% if comments %}
+      <ul>
+        {% for comment in comments %}
+          <li>
+            <strong>{{ comment[2] }}</strong>: {{ comment[1] }}
+            {% if session.get('user_id') == comment[3] %}
+            <form action="{{ url_for('delete_comment', comment_id=comment[0], instrument_id=instrument[0]) }}" method="post" style="display:inline;">
+                <input type="submit" value="Delete" class="btn btn-danger btn-sm">
+            </form>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+        <p>No comments yet. Be the first!</p>
+      {% endif %}
+
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('add_comment', instrument_id=instrument[0]) }}" class="btn btn-primary">Add Comment</a>
+      {% else %}
+        <p><a href="{{ url_for('login') }}">Log in</a> to add a comment.</p>
+      {% endif %}
+
+      <!-- Back button -->
+      {% if instrument[5] %}
+        <p><a href="{{ url_for(instrument[5] | lower) }}">Back to {{ instrument[5] }} page</a></p>
+      {% else %}
+        <p><a href="{{ url_for('instrument_list') }}">Back to instrument list</a></p>
+      {% endif %}
     {% else %}
-      <p>No comments yet. Be the first!</p>
+      <p>Instrument not found.</p>
     {% endif %}
-
-    {% if session.get('user_id') %}
-      <a href="{{ url_for('add_comment', instrument_id=instrument[0]) }}" class="btn btn-primary">Add Comment</a>
-    {% else %}
-      <p><a href="{{ url_for('login') }}">Log in</a> to add a comment.</p>
-    {% endif %}
-
-    <!-- Back button -->
-    <p><a href="{{ url_for(instrument[5] | lower) }}">Back to {{ instrument[5] }} page</a></p>
   </div>
 {% endblock %}

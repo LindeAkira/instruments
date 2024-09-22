@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-    <div class="container-with-background">
 <head>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 - Page Not Found</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="error-page">
-    <h1>404 - Page Not Found</h1>
-    <p>Oops! That page doesn't exist.</p>
-    <a href="/string">Go Back to String page</a>
+    <div class="error-container">
+        <h1 class="error-title">404</h1>
+        <p class="error-message">Oops! The page you're looking for doesn't exist.</p>
+        <a href="/string" class="string-button">Go Back to String page</a>
+    </div>
 </body>
-</div>
 </html>

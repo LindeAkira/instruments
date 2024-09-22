@@ -5,7 +5,7 @@
 {% block content %}
 <div class="flash-messages">
     {% if error_message %}
-        <div class="flash alert-danger">
+        <div class="flash error">
             {{ error_message }}
         </div>
     {% endif %}
@@ -15,11 +15,8 @@
     {% if search_term %}
         <h1>Search Results for "{{ search_term }}"</h1>
     {% endif %}
-    {% if error_message %}
-        <div class="alert alert-danger" role="alert">
-            {{ error_message }}
-        </div>
-    {% else %}
+    
+    {% if not error_message %}
         {% if results %}
             <ul class="instrument-list">
                 {% for instrument in results %}

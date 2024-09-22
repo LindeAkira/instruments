@@ -81,6 +81,9 @@ body {
     background-color: #ffc107; /* Yellow for warnings */
 }
 
+.flash.info {
+    background-color: #17a2b8; /* Blue for informational messages */
+}
 
 /* Body Background with Blur */
 body::before {
@@ -448,35 +451,54 @@ p {
 }
 
 
-/* Error Page Styles - 404, 500, 414 */
-.error-page {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 50px;
+/* Error Page Styles - 404, 500, etc. */
+body.error-page {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
-    background-color: #f5f5f5;
+    background-color: #f0f0f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.error-page h1 {
-    font-size: 50px;
-    color: #ff0000;
+/* Container for Error Content */
+.error-container {
+    text-align: center;
 }
 
-.error-page p {
-    font-size: 20px;
-    color: #555;
+/* Error Title Styling */
+.error-title {
+    font-size: 10rem;
+    color: #ff6b6b;
+    margin: 0;
 }
 
-.error-page a {
-    padding-bottom: 100px;
-    color: #007bff;
+/* Error Message Styling */
+.error-message {
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin: 20px 0;
+    font-weight: bold; /* Makes the font bolder */
+}
+
+
+/* Button Styling */
+.string-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #ff6b6b;
+    color: #ffffff;
     text-decoration: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
 }
 
-.error-page a:hover {
-    text-decoration: underline;
+.string-button:hover {
+    background-color: #ff4d4d;
 }
-
 
 .footer::before {
     content: '';
