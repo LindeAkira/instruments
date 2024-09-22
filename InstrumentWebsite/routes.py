@@ -1,6 +1,11 @@
 import hashlib
+
+
 import sqlite3
+
+
 from flask import Flask, flash, redirect, render_template, request, session, url_for, abort
+
 
 app = Flask(__name__)
 app.secret_key = 'secret'
@@ -54,7 +59,6 @@ def validate_input(input_value, input_type):
 
 
 # Error pages for page not found, url too long, server error
-
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
@@ -137,10 +141,10 @@ def login():
                 session['is_admin'] = True
 
             # Debugging: print the session to see if is_admin and user_id are set
-            print(session)  # Add this line here for debugging
+            print(session)
 
             flash("Successfully logged in!", "success")
-            return redirect(url_for('string'))  # Redirect to the string page
+            return redirect(url_for('string'))
         else:
             flash('Invalid username or password.', 'error')
     
@@ -192,7 +196,6 @@ def instrument_details(instrument_id):
         if not instrument_exists or not instrument_exists[0]:  # No instrument found
             raise KeyError
 
-        # Proceed with fetching the instrument details
         instrument_query = """
         SELECT Instrument.id, Instrument.name, Instrument.description, 
         Instrument.image, InstrumentFamily.id, InstrumentFamily.name
@@ -202,7 +205,7 @@ def instrument_details(instrument_id):
         """
         instrument = sql_queries(instrument_query, (instrument_id,), 'fetchone')
 
-        if instrument is None:  # If no data returned
+        if instrument is None:
             abort(404)
 
         # Query comments related to the instrument where comment_status is 1
@@ -227,7 +230,7 @@ def instrument_details(instrument_id):
         abort(404)
 
     except Exception as e:
-        print(f"General Exception occurred: {e}")  # Log error for debugging
+        print(f"General Exception occurred: {e}")
         abort(500, description=str(e))
 
 
@@ -254,6 +257,7 @@ def add_comment(instrument_id):
             if not instrument_exists or not instrument_exists[0]:  # No instrument found
                 # Using KeyError as a scapegoat if no instrument is found
                 raise KeyError
+            
             # Inserting comment into database
             query = """
             INSERT INTO Comments (instrument_id, user_id, comment, comment_status) 
@@ -302,7 +306,6 @@ def admin_comments():
         comment_id = request.form.get('comment_id')
         new_status = request.form.get('status')
 
-        # Fetch the current status of the comment
         current_status_query = "SELECT comment_status FROM Comments WHERE id = ?"
         current_status = sql_queries(current_status_query, (comment_id,), 'fetchone')[0]
 
