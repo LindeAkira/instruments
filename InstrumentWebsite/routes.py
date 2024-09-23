@@ -80,6 +80,14 @@ def trigger_error():
     raise Exception("This is a test error")
 
 
+@app.before_request
+def limit_url_length():
+    MAX_URL_LENGTH = 200  # Set your URL length limit
+    if len(request.path) > MAX_URL_LENGTH:
+        abort(414)
+
+
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -197,7 +205,7 @@ def instrument_details(instrument_id):
             raise KeyError
 
         instrument_query = """
-        SELECT Instrument.id, Instrument.name, Instrument.description, 
+        SELECT Instrument.id, Instrument.name, Instrument.description,
         Instrument.image, InstrumentFamily.id, InstrumentFamily.name
         FROM Instrument
         JOIN InstrumentFamily ON Instrument.familyid = InstrumentFamily.id
@@ -219,13 +227,6 @@ def instrument_details(instrument_id):
 
         return render_template('instrument.html', instrument=instrument, comments=comments)
     
-    except OverflowError as e:
-        print(f"OverflowError occurred: {e}")  # Log error for debugging
-        abort(414, description="The instrument ID is too large.")
-
-    except ValueError:
-        abort(414)
-
     except KeyError:
         abort(404)
 
