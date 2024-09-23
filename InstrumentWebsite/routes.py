@@ -148,14 +148,14 @@ def login():
             if user[3] == 1:
                 session['is_admin'] = True
 
-            # Debugging: print the session to see if is_admin and user_id are set
-            print(session)
-
+            # Retrieve and pop the original page URL
+            next_page = session.pop('next', None)
             flash("Successfully logged in!", "success")
-            return redirect(url_for('string'))
+            return redirect(next_page or url_for('string'))  # Redirect to the next page or a default page
+
         else:
             flash('Invalid username or password.', 'error')
-    
+
     return render_template('login.html', page='login')
 
 
@@ -178,8 +178,8 @@ def search():
             search_term = None
             results = []
         else:
-            # Valid input, proceed with search
-            query = "SELECT id, name, image FROM Instrument WHERE name LIKE ?"
+            # Valid input, proceed with search and order the results alphabetically
+            query = "SELECT id, name, image FROM Instrument WHERE name LIKE ? ORDER BY name"
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
             error_message = None
@@ -198,6 +198,10 @@ def search():
 @app.route('/instrument/<int:instrument_id>')
 def instrument_details(instrument_id):
     try:
+        # If the user is not logged in, store the current URL in the session before redirecting
+        if 'user_id' not in session:
+            session['next'] = request.url
+        
         # Check if the instrument_id exists in the database
         query = "SELECT COUNT(1) FROM Instrument WHERE id = ?"
         instrument_exists = sql_queries(query, (instrument_id,), 'fetchone')
@@ -226,7 +230,7 @@ def instrument_details(instrument_id):
         comments = sql_queries(comments_query, (instrument_id,), 'fetchall')
 
         return render_template('instrument.html', instrument=instrument, comments=comments)
-    
+
     except KeyError:
         abort(404)
 
@@ -353,6 +357,7 @@ def delete_comment(comment_id, instrument_id):
     return redirect(url_for('instrument_details', instrument_id=instrument_id))
 
 
+# Route for String Instruments
 @app.route('/string')
 def string():
     # Search form
@@ -365,19 +370,22 @@ def string():
             results = []  # No results should be shown
         else:
             query = """
-            SELECT id, name, image FROM Instrument WHERE familyid = 1 AND name LIKE ?
+            SELECT id, name, image FROM Instrument 
+            WHERE familyid = 1 AND name LIKE ? 
+            ORDER BY name
             """
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
-    # Displays all string instruments if there is no search term
     else:
-        query = "SELECT id, name, image FROM Instrument WHERE familyid = 1"
+        # Display all string instruments, ordered alphabetically
+        query = "SELECT id, name, image FROM Instrument WHERE familyid = 1 ORDER BY name"
         params = ()
         results = sql_queries(query, params, 'fetchall')
 
     return render_template("string.html", page='string', results=results)
- 
 
+
+# Route for Woodwind Instruments
 @app.route('/woodwind')
 def woodwind():
     search_term = request.args.get('search', '').strip()
@@ -389,18 +397,21 @@ def woodwind():
             results = []
         else:
             query = """
-            SELECT id, name, image FROM Instrument WHERE familyid = 2 AND name LIKE ?
+            SELECT id, name, image FROM Instrument 
+            WHERE familyid = 2 AND name LIKE ? 
+            ORDER BY name
             """
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
     else:
-        query = "SELECT id, name, image FROM Instrument WHERE familyid = 2"
+        query = "SELECT id, name, image FROM Instrument WHERE familyid = 2 ORDER BY name"
         params = ()
         results = sql_queries(query, params, 'fetchall')
 
     return render_template("woodwind.html", page='woodwind', results=results)
 
 
+# Route for Brass Instruments
 @app.route('/brass')
 def brass():
     search_term = request.args.get('search')
@@ -412,22 +423,21 @@ def brass():
             results = []  # No results should be shown
         else:
             query = """
-            SELECT id, name, image FROM Instrument WHERE familyid = 3 AND name LIKE ?
+            SELECT id, name, image FROM Instrument 
+            WHERE familyid = 3 AND name LIKE ? 
+            ORDER BY name
             """
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
     else:
-        query = "SELECT id, name, image FROM Instrument WHERE familyid = 3"
+        query = "SELECT id, name, image FROM Instrument WHERE familyid = 3 ORDER BY name"
         params = ()
         results = sql_queries(query, params, 'fetchall')
-
-    # Debugging: Print the results to the console
-    print("Search Term:", search_term)
-    print("Results:", results)
 
     return render_template("brass.html", page='brass', results=results)
 
 
+# Route for Percussion Instruments
 @app.route('/percussion')
 def percussion():
     search_term = request.args.get('search')
@@ -439,21 +449,18 @@ def percussion():
             results = []  # No results should be shown
         else:
             query = """
-            SELECT id, name, image FROM Instrument WHERE familyid = 4 AND name LIKE ?
+            SELECT id, name, image FROM Instrument 
+            WHERE familyid = 4 AND name LIKE ? 
+            ORDER BY name
             """
             params = ('%' + search_term + '%',)
             results = sql_queries(query, params, 'fetchall')
     else:
-        query = "SELECT id, name, image FROM Instrument WHERE familyid = 4"
+        query = "SELECT id, name, image FROM Instrument WHERE familyid = 4 ORDER BY name"
         params = ()
         results = sql_queries(query, params, 'fetchall')
 
-    # Debugging: Print the results to the console
-    print("Search Term:", search_term)
-    print("Results:", results)
-
     return render_template("percussion.html", page='percussion', results=results)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
