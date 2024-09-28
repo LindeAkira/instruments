@@ -3,18 +3,24 @@
 
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
+
+      <!-- Buttons that are always on the nav bar -->
       <li class="nav-item"><a class="nav-link" href="/string">String</a></li>
       <li class="nav-item"><a class="nav-link" href="/woodwind">Woodwind</a></li>
       <li class="nav-item"><a class="nav-link" href="/brass">Brass</a></li>
       <li class="nav-item"><a class="nav-link" href="/percussion">Percussion</a></li>
 
+      <!-- If the user is logged in an admin account -->
       {% if session.get('is_admin') %}
       <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_comments') }}">Admin</a></li>
       {% endif %}
       
+      <!-- If the user is logged in -->
       {% if session.get('user_id') %}
         <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
       {% else %}
+
+        <!-- If the user isn't logged in -->
         <li class="nav-item"><a class="nav-link" href="/signup">Sign Up</a></li>
         <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
       {% endif %}

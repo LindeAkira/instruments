@@ -3,6 +3,8 @@
 {% block title %}Woodwind Instruments{% endblock %}
 
 {% block content %}
+
+<!-- Flash messages -->
 <div class="flash-messages">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -17,11 +19,13 @@
 
 <h1>Woodwind Instruments</h1>
 
+<!-- Search form -->
 <form method="GET" action="{{ url_for('woodwind') }}" class="instrument-search-form">
-  <input type="text" name="search" placeholder="Search for a woodwind instrument" maxlength="50">
+  <input type="text" name="search" placeholder="Search for a woodwind instrument" required maxlength="50">
   <button type="submit">Search</button>
 </form>
 
+<!-- List of instruments if there are any i.e. from the search -->
 {% if results %}
 <div class="instrument-list">
   {% for instrument in results %}
@@ -39,6 +43,7 @@
 <p>No instruments found.</p>
 {% endif %}
 
+<!-- Back button if searched -->
 {% if request.args.get('search') %}
 <p><a href="{{ url_for('woodwind') }}">Return to Woodwind Page</a></p>
 {% endif %}

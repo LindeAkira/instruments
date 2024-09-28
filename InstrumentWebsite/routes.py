@@ -87,7 +87,6 @@ def limit_url_length():
         abort(414)
 
 
-
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -118,7 +117,7 @@ def signup():
         hashed_password = hash_password(password)
         try:
             sql_queries(
-                "INSERT INTO Users (username, password) VALUES (?, ?)",
+                "INSERT INTO Users (username, password, admin) VALUES (?, ?, 0)",
                 (username, hashed_password),
                 'commit'
             )
@@ -358,6 +357,7 @@ def delete_comment(comment_id, instrument_id):
 
 
 # Route for String Instruments
+@app.route('/')
 @app.route('/string')
 def string():
     # Search form
@@ -461,6 +461,7 @@ def percussion():
         results = sql_queries(query, params, 'fetchall')
 
     return render_template("percussion.html", page='percussion', results=results)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<!-- Flash messages -->
 <div class="flash-messages">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -13,6 +14,7 @@
     {% endwith %}
 </div>
 
+<!-- Admin comment table -->
 <div class="admin-comments-page">
     <h2>Admin - Manage Comments</h2>
     <table>

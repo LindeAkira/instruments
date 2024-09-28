@@ -3,6 +3,7 @@
 {% block title %}Instruments{% endblock %}
 
 {% block content %}
+  <!-- Flash messages -->
   <div class="flash-messages">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -17,11 +18,15 @@
 
   <div id="content">
     {% if instrument %}
-
+      <!-- Instrument information -->
       <h1>Details for the {{ instrument[1] }}</h1> 
-      <img src="{{ instrument[3] }}" alt="Image of {{ instrument[1] }}" class="instrument-image">
-      <p>{{ instrument[2] }}</p> 
-
+      <div class="flex-container">
+        <img src="{{ instrument[3] }}" alt="Image of {{ instrument[1] }}" class="instrument-image">
+        <p>{{ instrument[2] }}</p>
+      </div>
+    
+ 
+      <!-- Comments - if there are comments -->
       <h2>Comments</h2>
       {% if comments %}
       <ul>
@@ -36,22 +41,24 @@
           </li>
         {% endfor %}
       </ul>
+
+      <!-- Comments - if there aren't comments -->
       {% else %}
         <p>No comments yet. Be the first!</p>
       {% endif %}
 
+      <!-- Comments - if the user is logged in -->
       {% if session.get('user_id') %}
         <a href="{{ url_for('add_comment', instrument_id=instrument[0]) }}" class="btn btn-primary">Add Comment</a>
+      
+      <!-- Comments - if the user isn't logged in -->
       {% else %}
         <p><a href="{{ url_for('login') }}">Log in</a> to add a comment.</p>
       {% endif %}
 
       <!-- Back button -->
-      {% if instrument[5] %}
-        <p><a href="{{ url_for(instrument[5] | lower) }}">Back to {{ instrument[5] }} page</a></p>
-      {% else %}
-        <p><a href="{{ url_for('instrument_list') }}">Back to instrument list</a></p>
-      {% endif %}
+      <p><a href="{{ url_for(instrument[5]) }}">Back to {{ instrument[5] }} page</a></p>
+
     {% else %}
       <p>Instrument not found.</p>
     {% endif %}

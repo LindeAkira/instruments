@@ -189,7 +189,6 @@ body::before {
     justify-content: center;
     align-items: center;
     height: 100vh; /*viewport height*/
-    background-color: #f5f5f5;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -204,8 +203,6 @@ body::before {
 
 .login-page h2, .signup-page h2 {
     font-size: 28px;
-    margin-bottom: 20px;
-    color: #333;
 }
 
 .login-page label, .signup-page label {
@@ -213,7 +210,6 @@ body::before {
     margin-bottom: 4px;
     text-align: left;
     font-weight: bold;
-    color: #555;
 }
 
 .login-page input[type="text"],
@@ -245,11 +241,6 @@ body::before {
     background-color: #00b31b;
 }
 
-.login-page p, .signup-page p {
-    margin-top: 15px;
-    font-size: 14px;
-}
-
 .login-page a, .signup-page a {
     color: #007bff;
     text-decoration: none;
@@ -257,11 +248,6 @@ body::before {
 
 .login-page a:hover, .signup-page a:hover {
     text-decoration: underline;
-}
-
-
-p {
-    color: rgb(0, 0, 0);
 }
 
 
@@ -274,7 +260,13 @@ p {
     border-radius: 10px;  /* add rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* adds shadow for depth */
     margin: 0 auto;  /* Center the image */
-    display: block;  /* Center the image as a block element */
+    display: block;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 

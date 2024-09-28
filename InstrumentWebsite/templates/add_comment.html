@@ -3,6 +3,7 @@
 {% block title %}Add a Comment{% endblock %}
 
 {% block content %}
+    <!-- Flash messages -->
     <div class="flash-messages">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -17,11 +18,13 @@
 
     <h1>Add a Comment</h1>
 
+    <!-- Form -->
     <form action="{{ url_for('add_comment', instrument_id=instrument_id) }}" method="post" maxlength="150" class="comment-form">
         <label for="comment">Comment:</label><br>
         <textarea id="comment" name="comment" rows="4" cols="50" maxlength="200" style="resize: none;" autofocus></textarea><br><br>
         <input type="submit" value="Submit" class="submit-button">
     </form>
 
+    <!-- Back button -->
     <a href="{{ url_for('instrument_details', instrument_id=instrument_id) }}" class="back-link">Back to Instrument</a>
 {% endblock %}
