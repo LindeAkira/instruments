@@ -17,7 +17,6 @@ def hash_password(password):
 
 
 def check_password(stored_password, provided_password):
-    """Checks if the provided password matches the stored password."""
     return stored_password == hash_password(provided_password)
 
 
@@ -41,8 +40,6 @@ def sql_queries(query, params, option):
 
 def validate_input(input_value, input_type):
     """
-    Validates the input value for username or password.
-    
     Takes the input and which of username of password it is.
     Checks if it is valid by checking the length and what it contains e.g. digit, uppercase.
     """
@@ -123,6 +120,7 @@ def signup():
             )
             flash("Account created successfully", "success")
             return redirect(url_for('login'))
+
         except Exception as e:
             flash(f"An error occurred: {e}", "error")
             return render_template('signup.html')
@@ -150,8 +148,8 @@ def login():
             # Retrieve and pop the original page URL
             next_page = session.pop('next', None)
             flash("Successfully logged in!", "success")
-            return redirect(next_page or url_for('string'))  # Redirect to the next page or a default page
 
+            return redirect(next_page or url_for('string'))
         else:
             flash('Invalid username or password.', 'error')
 
@@ -160,7 +158,6 @@ def login():
 
 @app.route('/logout')
 def logout():
-    # The parameter None is passed to not raise an error if the user logs out without logging in
     session.clear()  # clear all session data
     flash("You have been logged out", "success")
     return redirect(url_for('string'))
@@ -170,18 +167,14 @@ def logout():
 def search():
     # Removes any spaces from the beginning and end
     search_term = request.args.get('search', '').strip()
-    
+
     if search_term:
-        if len(search_term) > 50:
-            error_message = "Search term must be under 50 characters."
-            search_term = None
-            results = []
-        else:
-            # Valid input, proceed with search and order the results alphabetically
-            query = "SELECT id, name, image FROM Instrument WHERE name LIKE ? ORDER BY name"
-            params = ('%' + search_term + '%',)
-            results = sql_queries(query, params, 'fetchall')
-            error_message = None
+        # Valid input, proceed with search and order the results alphabetically
+        query = "SELECT id, name, image FROM Instrument WHERE name LIKE ? ORDER BY name"
+        params = ('%' + search_term + '%',)
+        results = sql_queries(query, params, 'fetchall')
+        error_message = None
+
     else:
         # If the search term is empty (after stripping spaces)
         error_message = "Please enter a valid search term."
@@ -197,14 +190,14 @@ def search():
 @app.route('/instrument/<int:instrument_id>')
 def instrument_details(instrument_id):
     try:
-        # If the user is not logged in, store the current URL in the session before redirecting
+        # Store the current URL in the session before redirecting
         if 'user_id' not in session:
             session['next'] = request.url
-        
+
         # Check if the instrument_id exists in the database
         query = "SELECT COUNT(1) FROM Instrument WHERE id = ?"
         instrument_exists = sql_queries(query, (instrument_id,), 'fetchone')
-        if not instrument_exists or not instrument_exists[0]:  # No instrument found
+        if not instrument_exists or not instrument_exists[0]:
             raise KeyError
 
         instrument_query = """
@@ -261,7 +254,7 @@ def add_comment(instrument_id):
             if not instrument_exists or not instrument_exists[0]:  # No instrument found
                 # Using KeyError as a scapegoat if no instrument is found
                 raise KeyError
-            
+
             # Inserting comment into database
             query = """
             INSERT INTO Comments (instrument_id, user_id, comment, comment_status) 
@@ -271,7 +264,7 @@ def add_comment(instrument_id):
             sql_queries(query, params, 'commit')
             flash("Comment added and will display after profanity check.", "success")
             return redirect(url_for('instrument_details', instrument_id=instrument_id))
-        
+
         except ValueError:
             abort(414)
 
@@ -281,7 +274,7 @@ def add_comment(instrument_id):
         # This is where the error of no instrument leads
         except KeyError:
             abort(404)
-            
+
         except Exception as e:
             abort(500, description=str(e))
 
@@ -290,7 +283,6 @@ def add_comment(instrument_id):
 
 @app.route('/admin/comments', methods=['GET', 'POST'])
 def admin_comments():
-    # Check if the user is an admin
     if not session.get('is_admin'):
         flash("You do not have permission to view this page.", 'error')
         return redirect(url_for('string'))
@@ -328,7 +320,6 @@ def admin_comments():
 
 @app.route('/delete_comment/<int:comment_id>/<int:instrument_id>', methods=['POST', 'GET'])
 def delete_comment(comment_id, instrument_id):
-    # Checks if they are typing it into the URL
     if request.method == 'GET':
         flash('Invalid request method.', 'error')
         return redirect(url_for('instrument_details', instrument_id=instrument_id))
@@ -339,7 +330,7 @@ def delete_comment(comment_id, instrument_id):
     if not user_id:
         flash('You need to be logged in to delete your comment', 'error')
         return redirect(url_for('login'))
-    
+
     query = "SELECT user_id FROM Comments WHERE id = ?"
     comment = sql_queries(query, (comment_id,), 'fetchone')
 
@@ -356,26 +347,20 @@ def delete_comment(comment_id, instrument_id):
     return redirect(url_for('instrument_details', instrument_id=instrument_id))
 
 
-# Route for String Instruments
 @app.route('/')
 @app.route('/string')
 def string():
     # Search form
     search_term = request.args.get('search', '').strip()
-    
+
     if search_term:
-        if len(search_term) > 50:
-            flash("Search term must be under 50 characters.", "error")
-            search_term = None  # Clear the search term to prevent a query
-            results = []  # No results should be shown
-        else:
-            query = """
-            SELECT id, name, image FROM Instrument 
-            WHERE familyid = 1 AND name LIKE ? 
-            ORDER BY name
-            """
-            params = ('%' + search_term + '%',)
-            results = sql_queries(query, params, 'fetchall')
+        query = """
+        SELECT id, name, image FROM Instrument
+        WHERE familyid = 1 AND name LIKE ?
+        ORDER BY name
+        """
+        params = ('%' + search_term + '%',)
+        results = sql_queries(query, params, 'fetchall')
     else:
         # Display all string instruments, ordered alphabetically
         query = "SELECT id, name, image FROM Instrument WHERE familyid = 1 ORDER BY name"
@@ -391,18 +376,13 @@ def woodwind():
     search_term = request.args.get('search', '').strip()
 
     if search_term:
-        if len(search_term) > 50:
-            flash("Search term must be under 50 characters.", "error")
-            search_term = None
-            results = []
-        else:
-            query = """
-            SELECT id, name, image FROM Instrument 
-            WHERE familyid = 2 AND name LIKE ? 
-            ORDER BY name
-            """
-            params = ('%' + search_term + '%',)
-            results = sql_queries(query, params, 'fetchall')
+        query = """
+        SELECT id, name, image FROM Instrument
+        WHERE familyid = 2 AND name LIKE ?
+        ORDER BY name
+        """
+        params = ('%' + search_term + '%',)
+        results = sql_queries(query, params, 'fetchall')
     else:
         query = "SELECT id, name, image FROM Instrument WHERE familyid = 2 ORDER BY name"
         params = ()
@@ -417,18 +397,13 @@ def brass():
     search_term = request.args.get('search')
 
     if search_term:
-        if len(search_term) > 50:
-            flash("Search term must be under 50 characters.", "error")
-            search_term = None  # Clear the search term to prevent a query
-            results = []  # No results should be shown
-        else:
-            query = """
-            SELECT id, name, image FROM Instrument 
-            WHERE familyid = 3 AND name LIKE ? 
-            ORDER BY name
-            """
-            params = ('%' + search_term + '%',)
-            results = sql_queries(query, params, 'fetchall')
+        query = """
+        SELECT id, name, image FROM Instrument
+        WHERE familyid = 3 AND name LIKE ?
+        ORDER BY name
+        """
+        params = ('%' + search_term + '%',)
+        results = sql_queries(query, params, 'fetchall')
     else:
         query = "SELECT id, name, image FROM Instrument WHERE familyid = 3 ORDER BY name"
         params = ()
@@ -443,18 +418,13 @@ def percussion():
     search_term = request.args.get('search')
 
     if search_term:
-        if len(search_term) > 50:
-            flash("Search term must be under 50 characters.", "error")
-            search_term = None  # Clear the search term to prevent a query
-            results = []  # No results should be shown
-        else:
-            query = """
-            SELECT id, name, image FROM Instrument 
-            WHERE familyid = 4 AND name LIKE ? 
-            ORDER BY name
-            """
-            params = ('%' + search_term + '%',)
-            results = sql_queries(query, params, 'fetchall')
+        query = """
+        SELECT id, name, image FROM Instrument
+        WHERE familyid = 4 AND name LIKE ?
+        ORDER BY name
+        """
+        params = ('%' + search_term + '%',)
+        results = sql_queries(query, params, 'fetchall')
     else:
         query = "SELECT id, name, image FROM Instrument WHERE familyid = 4 ORDER BY name"
         params = ()
